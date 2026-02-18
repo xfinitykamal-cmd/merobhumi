@@ -11,6 +11,9 @@
 
 [🔗 API Docs](../API_TESTING_GUIDE.md) • [📚 Backend Guide](../BACKEND_DOCUMENTATION.md) • [🐛 Report Issues](https://github.com/AAYUSH412/Real-Estate-Website/issues)
 
+[![Live Demo](https://img.shields.io/badge/Live_API-On_Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://real-estate-website-backend-zfu7.onrender.com/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Aayush_Vaghela-000000?style=for-the-badge)](https://aayush-vaghela.vercel.app/)
+
 </div>
 
 ---
@@ -18,6 +21,7 @@
 ## ✨ Features
 
 ### � **Authentication & Security**
+
 - **JWT Authentication** - Secure token-based authentication
 - **Password Hashing** - Bcrypt for secure password storage
 - **Rate Limiting** - Protection against DDoS and brute force
@@ -26,6 +30,7 @@
 - **Security Headers** - Helmet.js for security headers
 
 ### 🏠 **Property Management**
+
 - **CRUD Operations** - Complete property lifecycle management
 - **Image Upload** - ImageKit integration for media handling
 - **Search & Filtering** - Advanced property search capabilities
@@ -34,6 +39,7 @@
 - **Bulk Operations** - Admin bulk property management
 
 ### 🤖 **AI & Intelligence**
+
 - **Azure AI Services** - Cognitive services integration
 - **OpenAI Integration** - GPT-powered property analysis
 - **Web Scraping** - Firecrawl for market data collection
@@ -42,6 +48,7 @@
 - **Smart Matching** - User preference learning
 
 ### 📧 **Communication**
+
 - **Email Notifications** - Automated email system
 - **Appointment Management** - Booking and scheduling system
 - **User Communications** - Contact form handling
@@ -51,25 +58,26 @@
 
 ## 🛠️ Tech Stack
 
-| Category | Technology | Purpose |
-|----------|------------|---------|
-| **Runtime** | Node.js 18+ | JavaScript runtime environment |
-| **Framework** | Express.js | Web application framework |
-| **Database** | MongoDB 8.9+ | NoSQL document database |
-| **ODM** | Mongoose | MongoDB object modeling |
-| **Authentication** | JWT + Bcrypt | Secure authentication system |
-| **File Upload** | Multer + ImageKit | File handling and CDN |
-| **Email** | Nodemailer | Email delivery system |
-| **AI Services** | Azure AI + OpenAI | Artificial intelligence integration |
-| **Security** | Helmet + CORS | Security middleware |
-| **Validation** | Express Validator | Input validation |
-| **Environment** | Dotenv | Environment configuration |
+| Category           | Technology        | Purpose                             |
+| ------------------ | ----------------- | ----------------------------------- |
+| **Runtime**        | Node.js 18+       | JavaScript runtime environment      |
+| **Framework**      | Express.js        | Web application framework           |
+| **Database**       | MongoDB 8.9+      | NoSQL document database             |
+| **ODM**            | Mongoose          | MongoDB object modeling             |
+| **Authentication** | JWT + Bcrypt      | Secure authentication system        |
+| **File Upload**    | Multer + ImageKit | File handling and CDN               |
+| **Email**          | Nodemailer        | Email delivery system               |
+| **AI Services**    | Azure AI + OpenAI | Artificial intelligence integration |
+| **Security**       | Helmet + CORS     | Security middleware                 |
+| **Validation**     | Express Validator | Input validation                    |
+| **Environment**    | Dotenv            | Environment configuration           |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18+ ([Download](https://nodejs.org/))
 - **MongoDB** ([Local](https://docs.mongodb.com/manual/installation/) or [Atlas](https://www.mongodb.com/cloud/atlas))
 - **npm** 8+ or **yarn** 1.22+
@@ -300,36 +308,39 @@ npm run docs             # Generate API documentation
 ### Development Workflow
 
 1. **Create New Feature**
+
    ```bash
    # Create model
    touch models/newModel.js
-   
+
    # Create controller
    touch controller/newController.js
-   
+
    # Create routes
    touch routes/newRoute.js
-   
+
    # Update server.js to include routes
    ```
 
 2. **Database Operations**
+
    ```bash
    # Connect to MongoDB
    mongo buildestate
-   
+
    # View collections
    show collections
-   
+
    # Query data
    db.properties.find().limit(5)
    ```
 
 3. **Testing APIs**
+
    ```bash
    # Use curl for quick testing
    curl -X GET http://localhost:4000/api/properties
-   
+
    # Or use Postman/Insomnia
    ```
 
@@ -346,8 +357,8 @@ npm run docs             # Generate API documentation
 
 ```javascript
 // controller/propertyController.js
-import Property from '../models/propertymodel.js';
-import { validationResult } from 'express-validator';
+import Property from "../models/propertymodel.js";
+import { validationResult } from "express-validator";
 
 // Get all properties with pagination
 export const getProperties = async (req, res) => {
@@ -356,13 +367,13 @@ export const getProperties = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const properties = await Property.find({ status: 'active' })
+    const properties = await Property.find({ status: "active" })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('owner', 'name email');
+      .populate("owner", "name email");
 
-    const total = await Property.countDocuments({ status: 'active' });
+    const total = await Property.countDocuments({ status: "active" });
 
     res.status(200).json({
       success: true,
@@ -370,15 +381,15 @@ export const getProperties = async (req, res) => {
       pagination: {
         current: page,
         pages: Math.ceil(total / limit),
-        total
-      }
+        total,
+      },
     });
   } catch (error) {
-    console.error('Get properties error:', error);
+    console.error("Get properties error:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch properties',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: "Failed to fetch properties",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
@@ -403,19 +414,19 @@ export const getProperties = async (req, res) => {
 
 ```javascript
 // Example: Secure route with validation
-import { body, validationResult } from 'express-validator';
-import rateLimit from 'express-rate-limit';
+import { body, validationResult } from "express-validator";
+import rateLimit from "express-rate-limit";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 attempts
-  message: 'Too many login attempts'
+  message: "Too many login attempts",
 });
 
 export const validateLogin = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }),
-  loginLimiter
+  body("email").isEmail().normalizeEmail(),
+  body("password").isLength({ min: 6 }),
+  loginLimiter,
 ];
 ```
 
@@ -509,7 +520,7 @@ CORS_ORIGIN=https://yourdomain.com,https://admin.yourdomain.com
 
 ```javascript
 // config/mongodb.js
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
@@ -522,7 +533,7 @@ const connectDB = async () => {
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('Database connection error:', error);
+    console.error("Database connection error:", error);
     process.exit(1);
   }
 };
@@ -534,7 +545,7 @@ export default connectDB;
 
 ```javascript
 // config/nodemailer.js
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransporter({
   host: process.env.SMTP_HOST,
@@ -569,18 +580,16 @@ touch tests/properties.test.js
 
 ```javascript
 // tests/auth.test.js
-import request from 'supertest';
-import app from '../server.js';
+import request from "supertest";
+import app from "../server.js";
 
-describe('Authentication', () => {
-  test('POST /api/users/register', async () => {
-    const response = await request(app)
-      .post('/api/users/register')
-      .send({
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123'
-      });
+describe("Authentication", () => {
+  test("POST /api/users/register", async () => {
+    const response = await request(app).post("/api/users/register").send({
+      name: "Test User",
+      email: "test@example.com",
+      password: "password123",
+    });
 
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
@@ -596,7 +605,7 @@ describe('Authentication', () => {
 
 ```javascript
 // Add to server.js
-import compression from 'compression';
+import compression from "compression";
 
 app.use(compression());
 
@@ -611,9 +620,9 @@ app.use((req, res, next) => {
 
 ```javascript
 // Add health check route
-app.get('/health', (req, res) => {
+app.get("/health", (req, res) => {
   res.status(200).json({
-    status: 'OK',
+    status: "OK",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
@@ -628,6 +637,7 @@ app.get('/health', (req, res) => {
 ### Common Issues
 
 **Database connection failed:**
+
 ```bash
 # Check MongoDB status
 brew services list | grep mongodb
@@ -639,6 +649,7 @@ echo $MONGODB_URI
 ```
 
 **JWT authentication errors:**
+
 ```bash
 # Verify JWT secret is set
 echo $JWT_SECRET
@@ -648,6 +659,7 @@ echo $JWT_SECRET
 ```
 
 **File upload issues:**
+
 ```bash
 # Check ImageKit configuration
 # Verify file size limits

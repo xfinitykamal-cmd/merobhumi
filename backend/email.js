@@ -1,401 +1,165 @@
-export const getSchedulingEmailTemplate = (appointment, date, time, notes) => `
-  <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-    <!-- Header with Background -->
-    <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Viewing Scheduled</h1>
-      <p style="color: #ffffff; opacity: 0.9; margin: 10px 0 0 0; font-size: 16px;">BuildEstate Property Viewing</p>
-    </div>
+// ═══════════════════════════════════════════════════════════
+// BuildEstate Email Templates
+// Design: Warm terracotta (#D4755B), clean & professional
+// ═══════════════════════════════════════════════════════════
 
-    <!-- Main Content -->
-    <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-      <!-- Appointment Details -->
-      <div style="background: #f0f7ff; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">Appointment Details</h2>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Property:</strong> ${appointment.propertyId.title}
-        </p>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Date:</strong> ${new Date(date).toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </p>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Time:</strong> ${time}
-        </p>
-        ${notes ? `
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Notes:</strong> ${notes}
-        </p>
-        ` : ''}
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Status:</strong> <span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 14px; background: #fef3c7; color: #854d0e;">Pending</span>
-        </p>
-      </div>
+const BRAND = {
+  color: '#D4755B',
+  dark: '#221410',
+  bg: '#FAF8F4',
+  border: '#E6E0DA',
+  text: '#374151',
+  muted: '#6B7280',
+  site: process.env.WEBSITE_URL || 'https://buildestate.vercel.app',
+  year: new Date().getFullYear(),
+};
 
-      <!-- Next Steps -->
-      <div style="margin-top: 30px;">
-        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">What's Next?</h3>
-        <ul style="list-style: none; padding: 0; margin: 0;">
-          <li style="margin-bottom: 10px; display: flex; align-items: center;">
-            <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; color: #854d0e;">!</span>
-            We will confirm your appointment shortly
-          </li>
-        </ul>
-      </div>
+// Shared wrapper — keeps every email consistent
+const wrap = (title, body) => `
+<div style="max-width:600px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;color:${BRAND.text};line-height:1.7;background:${BRAND.bg};border-radius:12px;overflow:hidden;border:1px solid ${BRAND.border};">
 
-      <!-- Contact Support -->
-      <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
-        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">Need Help?</h3>
-        <p style="margin: 0; color: #4b5563;">
-          Our support team is available 24/7 to assist you:
-          <br>
-          📧 <a href="mailto:support@buildestate.com" style="color: #2563eb; text-decoration: none;">support@buildestate.com</a>
-          <br>
-          📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
-        </p>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="text-align: center; margin-top: 30px;">
-      <p style="color: #6b7280; font-size: 14px;">
-        © ${new Date().getFullYear()} BuildEstate. All rights reserved.
-      </p>
-      <div style="margin-top: 10px;">
-        <a href="https://real-estate-website-sepia-two.vercel.app" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Website</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-      </div>
-    </div>
-  </div>
-`;
-
-
-export const getEmailTemplate = (appointment, status) => `
-  <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-    <!-- Header with Background -->
-    <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Appointment ${status.charAt(0).toUpperCase() + status.slice(1)}</h1>
-      <p style="color: #ffffff; opacity: 0.9; margin: 10px 0 0 0; font-size: 16px;">BuildEstate Property Viewing</p>
-    </div>
-
-    <!-- Main Content -->
-    <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-      <!-- Appointment Details -->
-      <div style="background: #f0f7ff; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">Appointment Details</h2>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Property:</strong> ${appointment.propertyId.title}
-        </p>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </p>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Time:</strong> ${appointment.time}
-        </p>
-        <p style="margin: 8px 0; color: #374151;">
-          <strong>Status:</strong> <span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 14px; background: ${
-            status === 'confirmed' ? '#dcfce7' : status === 'cancelled' ? '#fee2e2' : '#fef3c7'
-          }; color: ${
-            status === 'confirmed' ? '#166534' : status === 'cancelled' ? '#991b1b' : '#854d0e'
-          };">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-        </p>
-      </div>
-
-      <!-- Next Steps -->
-      <div style="margin-top: 30px;">
-        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">What's Next?</h3>
-        <ul style="list-style: none; padding: 0; margin: 0;">
-          ${status === 'confirmed' ? `
-            <li style="margin-bottom: 10px; display: flex; align-items: center;">
-              <span style="display: inline-block; width: 24px; height: 24px; background: #dcfce7; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; color: #166534;">✓</span>
-              Arrive 10 minutes before your scheduled time
-            </li>
-            <li style="margin-bottom: 10px; display: flex; align-items: center;">
-              <span style="display: inline-block; width: 24px; height: 24px; background: #dcfce7; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; color: #166534;">✓</span>
-              Bring valid identification
-            </li>
-          ` : status === 'cancelled' ? `
-            <li style="margin-bottom: 10px; display: flex; align-items: center;">
-              <span style="display: inline-block; width: 24px; height: 24px; background: #fee2e2; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; color: #991b1b;">i</span>
-              You can schedule another viewing at any time
-            </li>
-          ` : `
-            <li style="margin-bottom: 10px; display: flex; align-items: center;">
-              <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; margin-right: 10px; text-align: center; line-height: 24px; color: #854d0e;">!</span>
-              We will confirm your appointment shortly
-            </li>
-          `}
-        </ul>
-      </div>
-
-      <!-- Contact Support -->
-      <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
-        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">Need Help?</h3>
-        <p style="margin: 0; color: #4b5563;">
-          Our support team is available 24/7 to assist you:
-          <br>
-          📧 <a href="mailto:support@buildestate.com" style="color: #2563eb; text-decoration: none;">support@buildestate.com</a>
-          <br>
-          📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
-        </p>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="text-align: center; margin-top: 30px;">
-      <p style="color: #6b7280; font-size: 14px;">
-        © ${new Date().getFullYear()} BuildEstate. All rights reserved.
-      </p>
-      <div style="margin-top: 10px;">
-        <a href="https://real-estate-website-sepia-two.vercel.app" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Website</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-      </div>
-    </div>
-  </div>
-`;
-
-export const getNewsletterTemplate = (email) => `
-<div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-  <!-- Header with Background -->
-  <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Welcome to BuildEstate!</h1>
-    <p style="color: #ffffff; opacity: 0.9; margin: 10px 0 0 0; font-size: 16px;">Your Premier Real Estate Newsletter</p>
+  <!-- Header -->
+  <div style="background:${BRAND.dark};padding:32px 28px;text-align:center;">
+    <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">${title}</h1>
+    <p style="margin:8px 0 0;font-size:13px;color:rgba(255,255,255,0.7);">BuildEstate</p>
   </div>
 
-  <!-- Main Content -->
-  <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-    <!-- Welcome Message -->
-    <div style="text-align: center; margin-bottom: 30px;">
-      <p style="font-size: 18px; color: #374151; margin: 0;">Hello <strong style="color: #2563eb;">${email}</strong></p>
-      <p style="font-size: 16px; color: #4b5563; margin-top: 10px;">
-        Thank you for joining our community of property enthusiasts!
-      </p>
-    </div>
-
-    <!-- Benefits Section -->
-    <div style="background: #f0f7ff; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-      <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">What You'll Get:</h2>
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Latest Property Listings
-        </li>
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Real Estate Market Trends
-        </li>
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Exclusive Property Deals
-        </li>
-        <li style="display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Investment Opportunities
-        </li>
-      </ul>
-    </div>
-
-    <!-- CTA Button -->
-    <div style="text-align: center; margin: 35px 0;">
-      <a href="${process.env.WEBSITE_URL}"
-         style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
-        Explore Properties
-      </a>
-    </div>
-
-    <!-- Important Note -->
-    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 30px;">
-      <p style="margin: 0; color: #4b5563; font-size: 14px;">
-        <strong style="color: #1e40af;">📝 Note:</strong> To ensure you don't miss our updates, please add
-        <a href="mailto:support@buildestate.com" style="color: #2563eb; text-decoration: none;">support@buildestate.com</a>
-        to your contacts.
-      </p>
-    </div>
+  <!-- Body -->
+  <div style="padding:32px 28px;">
+    ${body}
   </div>
 
   <!-- Footer -->
-  <div style="text-align: center; margin-top: 30px;">
-    <div style="margin-bottom: 20px;">
-      <a href="#" style="display: inline-block; margin: 0 8px; color: #2563eb; text-decoration: none;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;">
-      </a>
-      <a href="#" style="display: inline-block; margin: 0 8px; color: #2563eb; text-decoration: none;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/twitter.png" alt="Twitter" style="width: 24px; height: 24px;">
-      </a>
-      <a href="#" style="display: inline-block; margin: 0 8px; color: #2563eb; text-decoration: none;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;">
-      </a>
-    </div>
-    <p style="color: #6b7280; font-size: 14px; margin: 0;">
-      © ${new Date().getFullYear()} BuildEstate. All rights reserved.
-    </p>
-    <p style="color: #6b7280; font-size: 12px; margin-top: 10px;">
-      You can <a href="#" style="color: #2563eb; text-decoration: none;">unsubscribe</a> at any time.
+  <div style="border-top:1px solid ${BRAND.border};padding:20px 28px;text-align:center;font-size:12px;color:${BRAND.muted};">
+    <p style="margin:0;">&copy; ${BRAND.year} BuildEstate. All rights reserved.</p>
+    <p style="margin:8px 0 0;">
+      <a href="${BRAND.site}" style="color:${BRAND.color};text-decoration:none;">Website</a>
+      &nbsp;&middot;&nbsp;
+      <a href="${BRAND.site}/contact" style="color:${BRAND.color};text-decoration:none;">Contact Us</a>
     </p>
   </div>
-</div>
-`;
+</div>`;
 
-export const getWelcomeTemplate = (name) => `
-<div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-  <!-- Header with Background -->
-  <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Welcome to BuildEstate!</h1>
-    <p style="color: #ffffff; opacity: 0.9; margin: 10px 0 0 0; font-size: 16px;">Your Dream Home Awaits</p>
+// Reusable detail row
+const row = (label, value) =>
+  `<tr><td style="padding:6px 0;color:${BRAND.muted};font-size:14px;width:110px;vertical-align:top;">${label}</td><td style="padding:6px 0;font-size:14px;color:${BRAND.dark};font-weight:500;">${value}</td></tr>`;
+
+// Reusable CTA button
+const btn = (href, text) =>
+  `<div style="text-align:center;margin:28px 0;">
+    <a href="${href}" style="display:inline-block;padding:14px 32px;background:${BRAND.color};color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">${text}</a>
+  </div>`;
+
+// Status badge
+const badge = (status) => {
+  const colors = {
+    confirmed: { bg: '#dcfce7', text: '#166534' },
+    cancelled: { bg: '#fee2e2', text: '#991b1b' },
+    pending:   { bg: '#fef3c7', text: '#854d0e' },
+  };
+  const c = colors[status] || colors.pending;
+  return `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:13px;font-weight:600;background:${c.bg};color:${c.text};">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+};
+
+// ─── 1. Scheduling Confirmation ──────────────────────────
+
+export const getSchedulingEmailTemplate = (appointment, date, time, notes) => wrap(
+  'Viewing Scheduled',
+  `<p style="margin:0 0 20px;font-size:15px;">Your property viewing has been scheduled. Here are the details:</p>
+
+  <div style="background:#ffffff;border:1px solid ${BRAND.border};border-radius:8px;padding:20px;margin-bottom:24px;">
+    <table style="width:100%;border-collapse:collapse;">
+      ${row('Property', appointment.propertyId.title)}
+      ${row('Date', new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))}
+      ${row('Time', time)}
+      ${notes ? row('Notes', notes) : ''}
+      ${row('Status', badge('pending'))}
+    </table>
   </div>
 
-  <!-- Main Content -->
-  <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-    <!-- Welcome Message -->
-    <div style="text-align: center; margin-bottom: 30px;">
-      <p style="font-size: 18px; color: #374151; margin: 0;">Hello <strong style="color: #2563eb;">${name}</strong></p>
-      <p style="font-size: 16px; color: #4b5563; margin-top: 10px;">
-        Welcome to our community of property enthusiasts! Your account has been successfully created.
-      </p>
-    </div>
+  <p style="font-size:14px;color:${BRAND.muted};margin:0;">We will confirm your appointment shortly. If you have any questions, reply to this email.</p>`
+);
 
-    <!-- Features Section -->
-    <div style="background: #f0f7ff; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-      <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">Unlock These Features:</h2>
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Browse Premium Property Listings
-        </li>
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Schedule Property Viewings
-        </li>
-        <li style="margin-bottom: 12px; display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Save Favorite Properties
-        </li>
-        <li style="display: flex; align-items: center;">
-          <span style="display: inline-block; width: 24px; height: 24px; background: #dbeafe; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #2563eb;">✓</span>
-          Direct Contact with Property Owners
-        </li>
-      </ul>
-    </div>
+// ─── 2. Appointment Status Update ────────────────────────
 
-    <!-- CTA Button -->
-    <div style="text-align: center; margin: 35px 0;">
-      <a href="${process.env.WEBSITE_URL}/properties"
-         style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
-        Start Exploring Properties
-      </a>
-    </div>
+export const getEmailTemplate = (appointment, status) => wrap(
+  `Appointment ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+  `<p style="margin:0 0 20px;font-size:15px;">Your appointment status has been updated.</p>
 
-    <!-- Support Section -->
-    <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
-      <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">Need Assistance?</h3>
-      <p style="margin: 0; color: #4b5563;">
-        Our support team is available 24/7:
-        <br>
-        📧 <a href="mailto:support@buildestate.com" style="color: #2563eb; text-decoration: none;">support@buildestate.com</a>
-        <br>
-        📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
-      </p>
-    </div>
+  <div style="background:#ffffff;border:1px solid ${BRAND.border};border-radius:8px;padding:20px;margin-bottom:24px;">
+    <table style="width:100%;border-collapse:collapse;">
+      ${row('Property', appointment.propertyId.title)}
+      ${row('Date', new Date(appointment.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))}
+      ${row('Time', appointment.time)}
+      ${row('Status', badge(status))}
+    </table>
   </div>
 
-  <!-- Footer -->
-  <div style="text-align: center; margin-top: 30px;">
-    <div style="margin-bottom: 20px;">
-      <a href="#" style="display: inline-block; margin: 0 8px;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;">
-      </a>
-      <a href="#" style="display: inline-block; margin: 0 8px;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/twitter.png" alt="Twitter" style="width: 24px; height: 24px;">
-      </a>
-      <a href="#" style="display: inline-block; margin: 0 8px;">
-        <img src="https://img.icons8.com/ios-filled/24/4a90e2/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;">
-      </a>
-    </div>
-    <p style="color: #6b7280; font-size: 14px; margin: 0;">
-      © ${new Date().getFullYear()} BuildEstate. All rights reserved.
-    </p>
-    <div style="margin-top: 10px;">
-      <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-      <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-    </div>
+  ${status === 'confirmed'
+    ? `<div style="background:#f0fdf4;border-left:3px solid #16a34a;padding:14px 16px;border-radius:6px;font-size:14px;color:#166534;margin-bottom:16px;">
+        <strong>Next steps:</strong> Please arrive 10 minutes early and bring a valid ID.
+      </div>`
+    : status === 'cancelled'
+    ? `<div style="background:#fef2f2;border-left:3px solid #dc2626;padding:14px 16px;border-radius:6px;font-size:14px;color:#991b1b;margin-bottom:16px;">
+        This appointment has been cancelled. You can schedule another viewing at any time.
+      </div>`
+    : ''
+  }
+
+  ${btn(BRAND.site + '/properties', 'Browse Properties')}`
+);
+
+// ─── 3. Newsletter Subscription ──────────────────────────
+
+export const getNewsletterTemplate = (email) => wrap(
+  'Welcome to Our Newsletter',
+  `<p style="margin:0 0 20px;font-size:15px;">Hello <strong style="color:${BRAND.color};">${email}</strong>,</p>
+  <p style="margin:0 0 24px;font-size:15px;">Thank you for subscribing! You'll now receive updates on:</p>
+
+  <div style="background:#ffffff;border:1px solid ${BRAND.border};border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <ul style="list-style:none;padding:0;margin:0;">
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Latest property listings</li>
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Real estate market trends</li>
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Exclusive deals &amp; investment tips</li>
+      <li style="padding:8px 0;font-size:14px;">AI-powered property insights</li>
+    </ul>
   </div>
-</div>
-`;
 
-export const getPasswordResetTemplate = (resetUrl) => `
-  <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-    <!-- Header with Background -->
-    <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Reset Your Password</h1>
-      <p style="color: #ffffff; opacity: 0.9; margin: 10px 0 0 0; font-size: 16px;">BuildEstate Account Security</p>
-    </div>
+  ${btn(BRAND.site + '/properties', 'Explore Properties')}`
+);
 
-    <!-- Main Content -->
-    <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-      <!-- Security Notice Box -->
-      <div style="background: #f0f7ff; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">Password Reset Request</h2>
-        <p style="margin: 8px 0; color: #374151;">
-          We received a request to reset your password for your BuildEstate account. For your security, this link will expire in 10 minutes.
-        </p>
-      </div>
+// ─── 4. Welcome (Registration) ──────────────────────────
 
-      <!-- Action Button -->
-      <div style="text-align: center; margin: 35px 0;">
-        <a href="${resetUrl}"
-           style="display: inline-block; padding: 16px 30px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
-          Reset Password
-        </a>
-      </div>
+export const getWelcomeTemplate = (name) => wrap(
+  'Welcome to BuildEstate',
+  `<p style="margin:0 0 20px;font-size:15px;">Hello <strong style="color:${BRAND.color};">${name}</strong>,</p>
+  <p style="margin:0 0 24px;font-size:15px;">Your account has been created successfully. Here's what you can do:</p>
 
-      <!-- Security Tips -->
-      <div style="background: #fef3c7; border-left: 4px solid #d97706; padding: 20px; border-radius: 8px; margin: 30px 0;">
-        <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px;">Security Notice</h3>
-        <ul style="list-style: none; padding: 0; margin: 0;">
-          <li style="margin-bottom: 10px; display: flex; align-items: center;">
-            <span style="display: inline-block; width: 24px; height: 24px; background: #fde68a; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #92400e;">!</span>
-            If you didn't request this password reset, please ignore this email
-          </li>
-          <li style="margin-bottom: 10px; display: flex; align-items: center;">
-            <span style="display: inline-block; width: 24px; height: 24px; background: #fde68a; border-radius: 50%; margin-right: 12px; text-align: center; line-height: 24px; color: #92400e;">!</span>
-            Never share this email or your password with anyone
-          </li>
-        </ul>
-      </div>
-
-      <!-- Support Section -->
-      <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
-        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">Need Help?</h3>
-        <p style="margin: 0; color: #4b5563;">
-          If you didn't request this reset or need assistance:
-          <br>
-          📧 <a href="mailto:security@buildestate.com" style="color: #2563eb; text-decoration: none;">security@buildestate.com</a>
-          <br>
-          📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
-        </p>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="text-align: center; margin-top: 30px;">
-      <p style="color: #6b7280; font-size: 14px;">
-        © ${new Date().getFullYear()} BuildEstate. All rights reserved.
-      </p>
-      <div style="margin-top: 10px;">
-        <a href="https://real-estate-website-sepia-two.vercel.app" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Website</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-        <a href="#" style="color: #2563eb; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-      </div>
-    </div>
+  <div style="background:#ffffff;border:1px solid ${BRAND.border};border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <ul style="list-style:none;padding:0;margin:0;">
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Browse premium property listings</li>
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Schedule property viewings</li>
+      <li style="padding:8px 0;border-bottom:1px solid ${BRAND.border};font-size:14px;">Get AI-powered property recommendations</li>
+      <li style="padding:8px 0;font-size:14px;">Save &amp; compare your favorite properties</li>
+    </ul>
   </div>
-`;
+
+  ${btn(BRAND.site + '/properties', 'Start Exploring')}
+
+  <p style="font-size:13px;color:${BRAND.muted};margin:0;">Need help? Just reply to this email or visit our <a href="${BRAND.site}/contact" style="color:${BRAND.color};text-decoration:none;">contact page</a>.</p>`
+);
+
+// ─── 5. Password Reset ──────────────────────────────────
+
+export const getPasswordResetTemplate = (resetUrl) => wrap(
+  'Reset Your Password',
+  `<p style="margin:0 0 20px;font-size:15px;">We received a request to reset your BuildEstate account password.</p>
+
+  <p style="margin:0 0 8px;font-size:14px;color:${BRAND.muted};">Click the button below to set a new password. This link expires in <strong>10 minutes</strong>.</p>
+
+  ${btn(resetUrl, 'Reset Password')}
+
+  <div style="background:#fef3c7;border-left:3px solid #d97706;padding:14px 16px;border-radius:6px;font-size:13px;color:#92400e;margin:24px 0 0;">
+    <strong>Didn't request this?</strong> You can safely ignore this email — your password will remain unchanged.
+  </div>`
+);

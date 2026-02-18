@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Home, 
-  List, 
-  PlusSquare, 
-  Calendar, 
-  Menu, 
-  X, 
-  LogOut, 
-  LayoutDashboard, 
-  Settings,
+import {
+  Home,
+  List,
+  PlusSquare,
+  Calendar,
+  Menu,
+  X,
+  LogOut,
+  LayoutDashboard,
   Bell,
   User,
-  ChevronDown
+  ChevronDown,
+  Settings,
 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,26 +23,21 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
-  // Handle scroll effect
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
-  
+
+  const isActive = (path) => location.pathname === path;
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('isAdmin');
     navigate('/login');
   };
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsProfileOpen(false);
@@ -59,94 +55,77 @@ const Navbar = () => {
     { path: '/appointments', label: 'Appointments', icon: Calendar },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.3,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0 }
-  };
-
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200/50' 
-          : 'bg-white shadow-md'
-      }`}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className={cn(
+        'fixed top-0 left-0 w-full z-50 transition-all duration-300',
+        scrolled
+          ? 'bg-[#1C1B1A]/98 backdrop-blur-md shadow-xl border-b border-white/5'
+          : 'bg-[#1C1B1A] shadow-md'
+      )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center group">
-            <motion.div 
+          <Link to="/dashboard" className="flex items-center gap-3 group">
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300"
+              className="w-9 h-9 bg-[#D4755B] rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-terracotta transition-all duration-300"
             >
               <Home className="h-5 w-5 text-white" />
-              
             </motion.div>
-            <div className="ml-3">
-              <span className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            <div>
+              <span className="text-lg font-bold text-[#FAF8F4] tracking-tight">
                 BuildEstate
               </span>
-              <div className="text-xs text-gray-500 font-medium">Admin Panel</div>
+              <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-widest leading-none">
+                Admin Panel
+              </div>
             </div>
           </Link>
-          
+
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                className={cn(
+                  'relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                   isActive(item.path)
-                    ? 'text-blue-700 bg-blue-50 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
+                    ? 'text-[#FAF8F4] bg-[#D4755B]'
+                    : 'text-[#9CA3AF] hover:text-[#FAF8F4] hover:bg-white/10'
+                )}
               >
-                <div className="flex items-center">
-                  <item.icon className={`h-4 w-4 mr-2 transition-colors ${
-                    isActive(item.path) ? 'text-blue-600' : 'text-gray-500'
-                  }`} />
-                  {item.label}
-                </div>
+                <item.icon className="h-4 w-4" />
+                {item.label}
                 {isActive(item.path) && (
                   <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-blue-50 rounded-xl border border-blue-100"
+                    layoutId="activeNavTab"
+                    className="absolute inset-0 bg-[#D4755B] rounded-lg"
                     style={{ zIndex: -1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
               </Link>
             ))}
           </nav>
 
-          {/* Desktop Profile & Actions */}
-          <div className="hidden md:flex items-center space-x-3">
+          {/* Desktop Right Actions */}
+          <div className="hidden md:flex items-center gap-2">
             {/* Notifications */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative p-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-200"
+              className="relative p-2 text-[#9CA3AF] hover:text-[#FAF8F4] hover:bg-white/10 rounded-lg transition-all duration-200"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-[#D4755B] rounded-full" />
             </motion.button>
 
             {/* Profile Dropdown */}
@@ -155,44 +134,45 @@ const Navbar = () => {
                 onClick={toggleProfile}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-2 p-2 rounded-xl hover:bg-gray-50 transition-all duration-200"
+                className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-lg hover:bg-white/10 transition-all duration-200"
               >
-                <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="h-8 w-8 bg-[#D4755B] rounded-lg flex items-center justify-center">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-left hidden lg:block">
-                  <div className="text-sm font-medium text-gray-900">Admin</div>
-                  <div className="text-xs text-gray-500">Administrator</div>
+                  <div className="text-sm font-semibold text-[#FAF8F4]">Admin</div>
+                  <div className="text-xs text-[#9CA3AF]">Administrator</div>
                 </div>
-                <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
-                  isProfileOpen ? 'rotate-180' : ''
-                }`} />
+                <ChevronDown
+                  className={cn(
+                    'h-4 w-4 text-[#9CA3AF] transition-transform duration-200',
+                    isProfileOpen && 'rotate-180'
+                  )}
+                />
               </motion.button>
 
               <AnimatePresence>
                 {isProfileOpen && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.95, y: -8 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2"
+                    exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-52 bg-[#1C1B1A] border border-white/10 rounded-xl shadow-2xl py-2 overflow-hidden"
                   >
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <div className="text-sm font-medium text-gray-900">Admin Panel</div>
-                      <div className="text-xs text-gray-500">Manage your properties</div>
+                    <div className="px-4 py-3 border-b border-white/10">
+                      <div className="text-sm font-semibold text-[#FAF8F4]">Admin Panel</div>
+                      <div className="text-xs text-[#9CA3AF] mt-0.5">Manage your properties</div>
                     </div>
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                    >
-                      <Settings className="h-4 w-4 mr-2" />
+                    <button className="w-full text-left px-4 py-2.5 text-sm text-[#9CA3AF] hover:text-[#FAF8F4] hover:bg-white/10 flex items-center gap-2.5 transition-colors">
+                      <Settings className="h-4 w-4" />
                       Settings
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                      className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2.5 transition-colors"
                     >
-                      <LogOut className="h-4 w-4 mr-2" />
+                      <LogOut className="h-4 w-4" />
                       Logout
                     </button>
                   </motion.div>
@@ -200,87 +180,78 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
           </div>
-          
+
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <motion.button
               onClick={toggleMenu}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+              className="p-2 text-[#9CA3AF] hover:text-[#FAF8F4] hover:bg-white/10 rounded-lg transition-all duration-200"
             >
-              <motion.div
-                animate={{ rotate: isMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
+              <AnimatePresence mode="wait">
                 {isMenuOpen ? (
-                  <X className="h-6 w-6" />
+                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <X className="h-6 w-6" />
+                  </motion.div>
                 ) : (
-                  <Menu className="h-6 w-6" />
+                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <Menu className="h-6 w-6" />
+                  </motion.div>
                 )}
-              </motion.div>
+              </AnimatePresence>
             </motion.button>
           </div>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50 shadow-lg"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="md:hidden bg-[#141312] border-t border-white/10 overflow-hidden"
           >
-            <div className="px-4 pt-4 pb-6 space-y-2">
+            <div className="px-4 pt-3 pb-5 space-y-1">
               {navItems.map((item) => (
-                <motion.div key={item.path} variants={itemVariants}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                      isActive(item.path)
-                        ? 'bg-blue-50 text-blue-700 border border-blue-100'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <item.icon className={`h-5 w-5 mr-3 ${
-                      isActive(item.path) ? 'text-blue-600' : 'text-gray-500'
-                    }`} />
-                    {item.label}
-                  </Link>
-                </motion.div>
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200',
+                    isActive(item.path)
+                      ? 'bg-[#D4755B] text-white'
+                      : 'text-[#9CA3AF] hover:text-[#FAF8F4] hover:bg-white/10'
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {item.label}
+                </Link>
               ))}
-              
-              {/* Mobile Profile Section */}
-              <motion.div variants={itemVariants} className="pt-4 border-t border-gray-200">
-                <div className="flex items-center px-4 py-3 mb-2">
-                  <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+
+              {/* Mobile Profile */}
+              <div className="pt-3 mt-3 border-t border-white/10">
+                <div className="flex items-center gap-3 px-4 py-3 mb-1">
+                  <div className="h-10 w-10 bg-[#D4755B] rounded-xl flex items-center justify-center">
                     <User className="h-5 w-5 text-white" />
                   </div>
-                  <div className="ml-3">
-                    <div className="text-sm font-medium text-gray-900">Admin</div>
-                    <div className="text-xs text-gray-500">Administrator</div>
+                  <div>
+                    <div className="text-sm font-semibold text-[#FAF8F4]">Admin</div>
+                    <div className="text-xs text-[#9CA3AF]">Administrator</div>
                   </div>
                 </div>
-                
-                <button
-                  className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-700 hover:bg-gray-50 flex items-center mb-2"
-                >
-                  <Settings className="h-4 w-4 mr-3" />
-                  Settings
-                </button>
-                
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 rounded-xl text-sm text-red-600 hover:bg-red-50 flex items-center"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
                 >
-                  <LogOut className="h-4 w-4 mr-3" />
+                  <LogOut className="h-4 w-4" />
                   Logout
                 </button>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         )}

@@ -1,603 +1,361 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
-import { Line, Doughnut } from "react-chartjs-2";
-import {
-  Home,
-  Activity,
-  Users,
-  Calendar,
-  TrendingUp,
-  Eye,
-  AlertCircle,
-  Loader,
-  Clock,
-  BarChart3,
-  PieChart,
-  RefreshCw,
-  ArrowUpRight,
-  ArrowDownRight,
+  Home, Users, Calendar, TrendingUp, RefreshCw, Activity,
+  Building2, Eye, BarChart3, AlertCircle
 } from "lucide-react";
+import {
+  Chart as ChartJS,
+  CategoryScale, LinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Title, Tooltip, Legend, Filler,
+} from "chart.js";
+import { Bar, Doughnut } from "react-chartjs-2";
 import { backendurl } from "../config/constants";
+import { cn, formatDate } from "../lib/utils";
 
-// Register ChartJS components
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
+  CategoryScale, LinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Title, Tooltip, Legend, Filler
 );
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({
-    totalProperties: 0,
-    activeListings: 0,
-    totalViews: 0,
-    pendingAppointments: 0,
-    recentActivity: [],
-    viewsData: {},
-    propertyTypeData: {},
-    monthlyStats: {},
-    loading: true,
-    error: null,
-  });
+// ─── Stat Card ───────────────────────────────────────────────────────────────
+const StatCard = ({ title, value, icon: Icon, accent, description, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.08 }}
+    className="bg-white rounded-2xl p-6 border border-[#E6D5C3] shadow-card hover:shadow-card-hover transition-all duration-300 group"
+  >
+    <div className="flex items-start justify-between mb-4">
+      <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110", accent.bg)}>
+        <Icon className={cn("w-5 h-5", accent.icon)} />
+      </div>
+    </div>
+    <div className="text-3xl font-bold text-[#1C1B1A] mb-1 tabular-nums">
+      {value ?? <span className="text-[#9CA3AF] text-xl">—</span>}
+    </div>
+    <div className="text-sm font-semibold text-[#1C1B1A] mb-0.5">{title}</div>
+    <div className="text-xs text-[#9CA3AF]">{description}</div>
+  </motion.div>
+);
 
-  const [timeRange, setTimeRange] = useState('30'); // 7, 30, 90 days
+// ─── Activity Item ────────────────────────────────────────────────────────────
+const ActivityItem = ({ item }) => {
+  const isProperty = item.type === "property";
+  return (
+    <div className="flex items-start gap-3 py-3 border-b border-[#F5F1E8] last:border-0">
+      <div className={cn(
+        "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5",
+        isProperty ? "bg-[#D4755B]/10" : "bg-blue-50"
+      )}>
+        {isProperty
+          ? <Building2 className="w-4 h-4 text-[#D4755B]" />
+          : <Calendar className="w-4 h-4 text-blue-500" />
+        }
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-[#1C1B1A] truncate">{item.title}</p>
+        <p className="text-xs text-[#9CA3AF] mt-0.5">
+          {isProperty ? "New property listed" : "Appointment scheduled"} • {formatDate(item.date)}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ─── Main Dashboard ───────────────────────────────────────────────────────────
+const Dashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Enhanced chart options with modern styling
+  const fetchStats = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+
+      const response = await axios.get(`${backendurl}/api/admin/stats`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      if (response.data.success) {
+        setStats(response.data.stats);
+        setError(null);
+      } else {
+        setError(response.data.message || "Failed to load stats");
+      }
+    } catch (err) {
+      console.error("Dashboard stats error:", err);
+      setError("Unable to connect to the server. Please try again.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchStats(); }, [fetchStats]);
+
+  const statCards = [
+    {
+      title: "Total Properties",
+      value: stats?.totalProperties,
+      icon: Home,
+      accent: { bg: "bg-[#D4755B]/10", icon: "text-[#D4755B]" },
+      description: "All listed properties",
+    },
+    {
+      title: "Active Listings",
+      value: stats?.activeListings,
+      icon: Building2,
+      accent: { bg: "bg-emerald-50", icon: "text-emerald-600" },
+      description: "Currently active",
+    },
+    {
+      title: "Total Users",
+      value: stats?.totalUsers,
+      icon: Users,
+      accent: { bg: "bg-blue-50", icon: "text-blue-600" },
+      description: "Registered accounts",
+    },
+    {
+      title: "Pending Appointments",
+      value: stats?.pendingAppointments,
+      icon: Calendar,
+      accent: { bg: "bg-amber-50", icon: "text-amber-600" },
+      description: "Awaiting confirmation",
+    },
+  ];
+
+  // Chart data
+  const viewsChartData = {
+    labels: stats?.viewsData?.labels ?? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        label: "Property Views",
+        data: stats?.viewsData?.data ?? [0, 0, 0, 0, 0, 0, 0],
+        backgroundColor: "rgba(212, 117, 91, 0.15)",
+        borderColor: "#D4755B",
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  const doughnutData = {
+    labels: ["Active", "Pending", "Inactive"],
+    datasets: [
+      {
+        data: [
+          stats?.activeListings ?? 0,
+          stats?.pendingAppointments ?? 0,
+          Math.max(0, (stats?.totalProperties ?? 0) - (stats?.activeListings ?? 0)),
+        ],
+        backgroundColor: ["#D4755B", "#F5D9D0", "#E6D5C3"],
+        borderColor: ["#C05E44", "#EBB3A1", "#D4B99A"],
+        borderWidth: 1,
+        hoverOffset: 6,
+      },
+    ],
+  };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-          font: {
-            size: 12,
-            family: "'Inter', sans-serif"
-          }
-        }
-      },
-      title: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
-        mode: 'index',
-        intersect: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        borderWidth: 1,
-        cornerRadius: 8,
+        backgroundColor: "#1C1B1A",
+        titleColor: "#FAF8F4",
+        bodyColor: "#9CA3AF",
         padding: 12,
+        cornerRadius: 8,
+        titleFont: { family: "Manrope", size: 12, weight: "600" },
+        bodyFont: { family: "Manrope", size: 11 },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          stepSize: 1,
-          precision: 0,
-          color: '#6B7280',
-          font: {
-            size: 11
-          }
-        },
-        grid: {
-          color: 'rgba(107, 114, 128, 0.1)',
-          drawBorder: false,
-        },
-        border: {
-          display: false
-        }
+        ticks: { stepSize: 1, precision: 0, color: "#9CA3AF", font: { family: "Manrope", size: 11 } },
+        grid: { color: "#F5F1E8" },
+        border: { display: false },
       },
       x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          maxRotation: 0,
-          color: '#6B7280',
-          font: {
-            size: 11
-          }
-        },
-        border: {
-          display: false
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    },
-    elements: {
-      line: {
-        tension: 0.4,
-        borderWidth: 3
+        ticks: { color: "#9CA3AF", font: { family: "Manrope", size: 11 } },
+        grid: { display: false },
+        border: { display: false },
       },
-      point: {
-        radius: 0,
-        hoverRadius: 6,
-        borderWidth: 2,
-        backgroundColor: '#fff'
-      }
-    }
+    },
   };
 
-  // Property type distribution chart options
   const doughnutOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    cutout: "70%",
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
         labels: {
-          padding: 20,
+          padding: 16,
           usePointStyle: true,
-          font: {
-            size: 12
-          }
-        }
+          pointStyleWidth: 8,
+          color: "#5A5856",
+          font: { family: "Manrope", size: 12 },
+        },
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        cornerRadius: 8,
+        backgroundColor: "#1C1B1A",
+        titleColor: "#FAF8F4",
+        bodyColor: "#9CA3AF",
         padding: 12,
-      }
+        cornerRadius: 8,
+      },
     },
-    cutout: '60%',
   };
 
-  const fetchStats = async () => {
-    try {
-      setRefreshing(true);
-      const response = await axios.get(`${backendurl}/api/admin/stats`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (response.data.success) {
-        setStats((prev) => ({
-          ...prev,
-          ...response.data.stats,
-          loading: false,
-          error: null,
-        }));
-      } else {
-        throw new Error(response.data.message || "Failed to fetch stats");
-      }
-    } catch (error) {
-      setStats((prev) => ({
-        ...prev,
-        loading: false,
-        error: error.message || "Failed to fetch dashboard data",
-      }));
-      console.error("Error fetching stats:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-    // Refresh data every 5 minutes
-    const interval = setInterval(fetchStats, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const statCards = [
-    {
-      title: "Total Properties",
-      value: stats.totalProperties,
-      icon: Home,
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
-      description: "Total properties listed",
-      change: "+12%",
-      changeType: "positive"
-    },
-    {
-      title: "Active Listings",
-      value: stats.activeListings,
-      icon: Activity,
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
-      description: "Currently active listings",
-      change: "+8%",
-      changeType: "positive"
-    },
-    {
-      title: "Total Views",
-      value: stats.totalViews,
-      icon: Eye,
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
-      description: "Property page views",
-      change: "+23%",
-      changeType: "positive"
-    },
-    {
-      title: "Pending Appointments",
-      value: stats.pendingAppointments,
-      icon: Calendar,
-      color: "from-orange-500 to-orange-600",
-      bgColor: "bg-orange-50",
-      iconColor: "text-orange-600",
-      description: "Awaiting confirmation",
-      change: "-5%",
-      changeType: "negative"
-    },
-  ];
-
-  if (stats.loading) {
+  // Loading skeleton
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <motion.div 
-          initial={{ opacity: 1, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center bg-white p-8 rounded-2xl shadow-lg"
-        >
-          <div className="relative">
-            <Loader className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-            <div className="absolute inset-0 w-12 h-12 border-4 border-blue-100 rounded-full mx-auto"></div>
+      <div className="min-h-screen pt-24 pb-12 px-4 bg-[#FAF8F4]">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <div className="h-8 w-48 bg-[#E6D5C3] rounded-xl animate-pulse mb-2" />
+            <div className="h-4 w-64 bg-[#E6D5C3] rounded-lg animate-pulse" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Dashboard</h3>
-          <p className="text-gray-600">Fetching your latest data...</p>
-        </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl p-6 border border-[#E6D5C3] animate-pulse">
+                <div className="w-11 h-11 bg-[#E6D5C3] rounded-xl mb-4" />
+                <div className="h-8 w-16 bg-[#E6D5C3] rounded-lg mb-2" />
+                <div className="h-4 w-24 bg-[#E6D5C3] rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (stats.error) {
+  // Error state
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <motion.div 
-          initial={{ opacity: 1, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center bg-white p-8 rounded-2xl shadow-lg max-w-md"
-        >
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[#FAF8F4]">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Unable to Load Dashboard
-          </h3>
-          <p className="text-gray-600 mb-6">{stats.error}</p>
-          <button
-            onClick={fetchStats}
-            disabled={refreshing}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg 
-              hover:from-blue-600 hover:to-blue-700 transition-all duration-200 
-              flex items-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {refreshing ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
-              <TrendingUp className="w-4 h-4" />
-            )}
-            {refreshing ? 'Retrying...' : 'Try Again'}
+          <h3 className="text-lg font-bold text-[#1C1B1A] mb-2">Failed to load dashboard</h3>
+          <p className="text-[#5A5856] mb-6 text-sm">{error}</p>
+          <button onClick={() => fetchStats()}
+            className="px-6 py-3 bg-[#D4755B] text-white rounded-xl font-semibold text-sm hover:bg-[#C05E44] transition-colors">
+            Try Again
           </button>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen pt-24 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-50"
-    >
+    <div className="min-h-screen pt-24 pb-12 px-4 bg-[#FAF8F4]">
       <div className="max-w-7xl mx-auto">
-        {/* Enhanced Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4"
-        >
+
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
-              Dashboard Overview
-            </h1>
-            <p className="text-lg text-gray-600 flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Welcome back! Here&apos;s what&apos;s happening with your properties
-            </p>
+            <h1 className="text-3xl font-bold text-[#1C1B1A] mb-1">Dashboard</h1>
+            <p className="text-[#5A5856] text-sm">Welcome back — here's what's happening today</p>
           </div>
-
-          <div className="flex items-center gap-3">
-            {/* Time Range Selector */}
-            <div className="flex items-center bg-white rounded-lg shadow-sm border p-1">
-              {['7', '30', '90'].map((days) => (
-                <button
-                  key={days}
-                  onClick={() => setTimeRange(days)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                    timeRange === days
-                      ? 'bg-blue-500 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                >
-                  {days} days
-                </button>
-              ))}
-            </div>
-
-            {/* Refresh Button */}
-            <button
-              onClick={fetchStats}
-              disabled={refreshing}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg 
-                hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 
-                flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-            >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Updating...' : 'Refresh'}
-            </button>
-          </div>
+          <motion.button
+            onClick={() => fetchStats(true)}
+            disabled={refreshing}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#E6D5C3] text-[#1C1B1A] rounded-xl text-sm font-medium hover:border-[#D4755B] hover:text-[#D4755B] transition-all duration-200 shadow-card disabled:opacity-60"
+          >
+            <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </motion.button>
         </motion.div>
 
-        {/* Enhanced Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl 
-                transition-all duration-300 border border-gray-100 hover:border-gray-200
-                overflow-hidden"
-            >
-              {/* Background Gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 
-                group-hover:opacity-5 transition-opacity duration-300`}></div>
-              
-              {/* Content */}
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl ${stat.bgColor} group-hover:scale-110 transition-transform duration-300`}>
-                    <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
-                  </div>
-                  <div className="text-right">
-                    <div className={`flex items-center gap-1 text-sm font-medium ${
-                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.changeType === 'positive' ? (
-                        <ArrowUpRight className="w-4 h-4" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4" />
-                      )}
-                      {stat.change}
-                    </div>
-                    <span className="text-xs text-gray-500">vs last month</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-600">{stat.title}</h3>
-                  <p className="text-3xl font-bold text-gray-900 group-hover:text-gray-800">
-                    {stat.value.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-gray-500">{stat.description}</p>
-                </div>
-              </div>
-
-              {/* Hover Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent 
-                opacity-0 group-hover:opacity-10 transform -skew-x-12 -translate-x-full 
-                group-hover:translate-x-full transition-all duration-700"></div>
-            </motion.div>
+        {/* Stat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {statCards.map((card, index) => (
+            <StatCard key={card.title} {...card} index={index} />
           ))}
         </div>
 
-        {/* Enhanced Charts Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-          {/* Property Views Chart - Larger */}
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Bar Chart — Views */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="xl:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+            transition={{ delay: 0.35 }}
+            className="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#E6D5C3] shadow-card"
           >
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-blue-600" />
-                  Property Views Analytics
-                </h2>
-                <p className="text-sm text-gray-600 mt-1">Track your property engagement over time</p>
+                <h3 className="text-base font-bold text-[#1C1B1A]">Property Views</h3>
+                <p className="text-xs text-[#9CA3AF] mt-0.5">Weekly view activity</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  Views
-                </div>
+              <div className="flex items-center gap-1.5 text-xs text-[#D4755B] font-medium">
+                <BarChart3 className="w-4 h-4" />
+                This Week
               </div>
             </div>
-            <div className="h-[350px]">
-              {stats.viewsData && Object.keys(stats.viewsData).length > 0 ? (
-                <Line data={stats.viewsData} options={chartOptions} />
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <BarChart3 className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500 font-medium">No view data available</p>
-                  <p className="text-sm text-gray-400">Data will appear once you have property views</p>
-                </div>
-              )}
+            <div className="h-52">
+              <Bar data={viewsChartData} options={chartOptions} />
             </div>
           </motion.div>
 
-          {/* Property Distribution */}
+          {/* Doughnut — Portfolio */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+            className="bg-white rounded-2xl p-6 border border-[#E6D5C3] shadow-card"
           >
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <PieChart className="w-5 h-5 text-purple-600" />
-                  Property Types
-                </h2>
-                <p className="text-sm text-gray-600 mt-1">Distribution overview</p>
-              </div>
+            <div className="mb-6">
+              <h3 className="text-base font-bold text-[#1C1B1A]">Portfolio Status</h3>
+              <p className="text-xs text-[#9CA3AF] mt-0.5">Listing breakdown</p>
             </div>
-            <div className="h-[350px]">
-              {stats.propertyTypeData && Object.keys(stats.propertyTypeData).length > 0 ? (
-                <Doughnut data={stats.propertyTypeData} options={doughnutOptions} />
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <PieChart className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500 font-medium">No property data</p>
-                  <p className="text-sm text-gray-400 text-center">Add properties to see distribution</p>
-                </div>
-              )}
+            <div className="h-52">
+              <Doughnut data={doughnutData} options={doughnutOptions} />
             </div>
           </motion.div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Activity className="w-5 h-5 text-green-600" />
-                Recent Activity
-              </h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View All
-              </button>
-            </div>
-            <div className="space-y-4 max-h-[350px] overflow-y-auto">
-              {stats.recentActivity?.length > 0 ? (
-                stats.recentActivity.map((activity, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl 
-                      transition-colors duration-200 border border-transparent hover:border-gray-100"
-                  >
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg 
-                      flex items-center justify-center flex-shrink-0">
-                      <Users className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">
-                        {activity.description}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(activity.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Activity className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500 font-medium">No recent activity</p>
-                  <p className="text-sm text-gray-400">Activity will appear here as users interact with your properties</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
+        {/* Recent Activity */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="bg-white rounded-2xl p-6 border border-[#E6D5C3] shadow-card"
+        >
+          <div className="flex items-center gap-2 mb-5">
+            <Activity className="w-5 h-5 text-[#D4755B]" />
+            <h3 className="text-base font-bold text-[#1C1B1A]">Recent Activity</h3>
+          </div>
 
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-indigo-600" />
-                Performance Insights
-              </h2>
+          {stats?.recentActivity?.length > 0 ? (
+            <div>
+              {stats.recentActivity.map((item, index) => (
+                <ActivityItem key={index} item={item} />
+              ))}
             </div>
-            <div className="space-y-6">
-              {/* Average Views per Property */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Avg. Views per Property</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stats.totalProperties > 0 ? Math.round(stats.totalViews / stats.totalProperties) : 0}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Eye className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-
-              {/* Active Listing Rate */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Active Listing Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stats.totalProperties > 0 ? Math.round((stats.activeListings / stats.totalProperties) * 100) : 0}%
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Activity className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-
-              {/* Appointment Conversion */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl">
-                <div>
-                  <p className="text-sm text-gray-600">Pending Appointments</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pendingAppointments}</p>
-                </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-orange-600" />
-                </div>
-              </div>
+          ) : (
+            <div className="text-center py-8">
+              <Eye className="w-10 h-10 text-[#E6D5C3] mx-auto mb-3" />
+              <p className="text-sm text-[#9CA3AF]">No recent activity to display</p>
             </div>
-          </motion.div>
-        </div>
+          )}
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

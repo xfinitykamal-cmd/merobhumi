@@ -1,21 +1,29 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Calendar,
-  Clock,
-  User,
-  Home,
-  Check,
-  X,
-  Loader,
-  Filter,
-  Search,
-  Link as LinkIcon,
-  Send,
+  Calendar, Clock, User, Home, Check, X, Loader2,
+  Filter, Search, Link as LinkIcon, Send, AlertCircle,
+  ChevronDown,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { backendurl } from "../config/constants";
+import { cn, formatDate } from "../lib/utils";
+
+const STATUS_CONFIG = {
+  pending: { label: "Pending", className: "bg-amber-50 text-amber-700 border border-amber-200" },
+  confirmed: { label: "Confirmed", className: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  cancelled: { label: "Cancelled", className: "bg-red-50 text-red-700 border border-red-200" },
+};
+
+const StatusBadge = ({ status }) => {
+  const config = STATUS_CONFIG[status] || { label: status, className: "bg-gray-100 text-gray-700" };
+  return (
+    <span className={cn("px-2.5 py-1 rounded-full text-xs font-semibold", config.className)}>
+      {config.label}
+    </span>
+  );
+};
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -24,6 +32,7 @@ const Appointments = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingMeetingLink, setEditingMeetingLink] = useState(null);
   const [meetingLink, setMeetingLink] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
 
   const fetchAppointments = async () => {
     try {
@@ -31,13 +40,9 @@ const Appointments = () => {
       const response = await axios.get(`${backendurl}/api/appointments/all`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
       if (response.data.success) {
-        // Filter out appointments with missing user data
-        const validAppointments = response.data.appointments.filter(
-          (apt) => apt.userId && apt.propertyId
-        );
-        setAppointments(validAppointments);
+        const valid = response.data.appointments.filter((apt) => apt.propertyId);
+        setAppointments(valid);
       } else {
         toast.error(response.data.message);
       }
@@ -51,17 +56,12 @@ const Appointments = () => {
 
   const handleStatusChange = async (appointmentId, newStatus) => {
     try {
+      setUpdatingId(appointmentId);
       const response = await axios.put(
         `${backendurl}/api/appointments/status`,
-        {
-          appointmentId,
-          status: newStatus,
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        { appointmentId, status: newStatus },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-
       if (response.data.success) {
         toast.success(`Appointment ${newStatus} successfully`);
         fetchAppointments();
@@ -71,27 +71,19 @@ const Appointments = () => {
     } catch (error) {
       console.error("Error updating appointment:", error);
       toast.error("Failed to update appointment status");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
   const handleMeetingLinkUpdate = async (appointmentId) => {
+    if (!meetingLink) { toast.error("Please enter a meeting link"); return; }
     try {
-      if (!meetingLink) {
-        toast.error("Please enter a meeting link");
-        return;
-      }
-
       const response = await axios.put(
         `${backendurl}/api/appointments/update-meeting`,
-        {
-          appointmentId,
-          meetingLink,
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        { appointmentId, meetingLink },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-
       if (response.data.success) {
         toast.success("Meeting link sent successfully");
         setEditingMeetingLink(null);
@@ -106,270 +98,242 @@ const Appointments = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
+  useEffect(() => { fetchAppointments(); }, []);
 
   const filteredAppointments = appointments.filter((apt) => {
+    const clientName = apt.userId?.name || apt.guestInfo?.name || "";
+    const clientEmail = apt.userId?.email || apt.guestInfo?.email || "";
     const matchesSearch =
-      searchTerm === "" ||
+      !searchTerm ||
       apt.propertyId?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      apt.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      apt.userId?.email?.toLowerCase().includes(searchTerm.toLowerCase());
-
+      clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      clientEmail.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === "all" || apt.status === filter;
-
     return matchesSearch && matchesFilter;
   });
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "confirmed":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  const counts = {
+    all: appointments.length,
+    pending: appointments.filter((a) => a.status === "pending").length,
+    confirmed: appointments.filter((a) => a.status === "confirmed").length,
+    cancelled: appointments.filter((a) => a.status === "cancelled").length,
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 flex items-center justify-center">
-        <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[#FAF8F4]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-3 border-[#D4755B] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#5A5856] font-medium">Loading appointments...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-32 px-4 bg-gray-50">
+    <div className="min-h-screen pt-24 pb-12 px-4 bg-[#FAF8F4]">
       <div className="max-w-7xl mx-auto">
-        {/* Header and Search Section - Keep existing code */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              Appointments
-            </h1>
-            <p className="text-gray-600">
-              Manage and track property viewing appointments
-            </p>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search appointments..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <h1 className="text-3xl font-bold text-[#1C1B1A] mb-1">Appointments</h1>
+          <p className="text-[#5A5856]">Manage and track property viewing appointments</p>
+        </motion.div>
+
+        {/* Filter Tabs + Search */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-white rounded-2xl p-4 border border-[#E6D5C3] shadow-card mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            {/* Status Tabs */}
+            <div className="flex items-center gap-1 bg-[#FAF8F4] rounded-xl p-1">
+              {["all", "pending", "confirmed", "cancelled"].map((status) => (
+                <button key={status} onClick={() => setFilter(status)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 capitalize",
+                    filter === status
+                      ? "bg-[#1C1B1A] text-[#FAF8F4] shadow-sm"
+                      : "text-[#5A5856] hover:text-[#1C1B1A]"
+                  )}>
+                  {status === "all" ? "All" : status.charAt(0).toUpperCase() + status.slice(1)}
+                  <span className={cn(
+                    "ml-1.5 text-xs px-1.5 py-0.5 rounded-full",
+                    filter === status ? "bg-white/20" : "bg-[#E6D5C3] text-[#5A5856]"
+                  )}>
+                    {counts[status]}
+                  </span>
+                </button>
+              ))}
             </div>
 
-            <div className="flex items-center gap-2">
-              <Filter className="text-gray-400" />
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="rounded-lg border border-gray-200 px-4 py-2 focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Appointments</option>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+            {/* Search */}
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
+              <input type="text" placeholder="Search by property, client..."
+                value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-[#FAF8F4] border border-[#E6D5C3] rounded-xl text-sm text-[#1C1B1A] placeholder-[#9CA3AF] outline-none focus:border-[#D4755B] focus:ring-2 focus:ring-[#D4755B]/15 transition-all" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Table */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="bg-white rounded-2xl border border-[#E6D5C3] shadow-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Property
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Client
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date & Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Meeting Link
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+              <thead>
+                <tr className="bg-[#1C1B1A]">
+                  {["Property", "Client", "Date & Time", "Status", "Meeting Link", "Actions"].map((h) => (
+                    <th key={h} className="px-6 py-4 text-left text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredAppointments.map((appointment) => (
-                  <motion.tr
-                    key={appointment._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="hover:bg-gray-50"
-                  >
-                    {/* Property Details */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Home className="w-5 h-5 text-gray-400 mr-2" />
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {appointment.propertyId.title}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {appointment.propertyId.location}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
+              <tbody className="divide-y divide-[#F5F1E8]">
+                <AnimatePresence>
+                  {filteredAppointments.map((appointment) => (
+                    <motion.tr key={appointment._id}
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      className="hover:bg-[#FAF8F4] transition-colors duration-150">
 
-                    {/* Client Details */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <User className="w-5 h-5 text-gray-400 mr-2" />
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {appointment.userId?.name || "Unknown"}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {appointment.userId?.email || "Unknown"}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Date & Time */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <Calendar className="w-5 h-5 text-gray-400 mr-2" />
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {new Date(appointment.date).toLocaleDateString()}
-                          </p>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Clock className="w-4 h-4 mr-1" />
-                            {appointment.time}
+                      {/* Property */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 bg-[#D4755B]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Home className="w-4 h-4 text-[#D4755B]" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-[#1C1B1A] line-clamp-1">
+                              {appointment.propertyId.title}
+                            </p>
+                            <p className="text-xs text-[#9CA3AF]">{appointment.propertyId.location}</p>
                           </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Status */}
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          appointment.status
-                        )}`}
-                      >
-                        {appointment.status.charAt(0).toUpperCase() +
-                          appointment.status.slice(1)}
-                      </span>
-                    </td>
-
-                    {/* Meeting Link */}
-                    <td className="px-6 py-4">
-                      {editingMeetingLink === appointment._id ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="url"
-                            value={meetingLink}
-                            onChange={(e) => setMeetingLink(e.target.value)}
-                            placeholder="Enter meeting link"
-                            className="px-2 py-1 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm w-full"
-                          />
-                          <button
-                            onClick={() =>
-                              handleMeetingLinkUpdate(appointment._id)
-                            }
-                            className="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            <Send className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingMeetingLink(null);
-                              setMeetingLink("");
-                            }}
-                            className="p-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                      {/* Client */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0", appointment.userId ? "bg-blue-50" : "bg-amber-50")}>
+                            <User className={cn("w-4 h-4", appointment.userId ? "text-blue-500" : "text-amber-500")} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-[#1C1B1A]">
+                              {appointment.userId?.name || appointment.guestInfo?.name || "Unknown"}
+                            </p>
+                            <p className="text-xs text-[#9CA3AF]">
+                              {appointment.userId?.email || appointment.guestInfo?.email || "—"}
+                            </p>
+                            {!appointment.userId && appointment.guestInfo && (
+                              <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full font-medium">Guest</span>
+                            )}
+                          </div>
                         </div>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          {appointment.meetingLink ? (
-                            <a
-                              href={appointment.meetingLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-                            >
-                              <LinkIcon className="w-4 h-4" />
-                              View Link
-                            </a>
-                          ) : (
-                            <span className="text-gray-500">No link yet</span>
-                          )}
-                          {appointment.status === "confirmed" && (
-                            <button
-                              onClick={() => {
-                                setEditingMeetingLink(appointment._id);
-                                setMeetingLink(appointment.meetingLink || "");
-                              }}
-                              className="ml-2 text-gray-400 hover:text-gray-600"
-                            >
-                              <LinkIcon className="w-4 h-4" />
+                      </td>
+
+                      {/* Date & Time */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-[#9CA3AF] flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-[#1C1B1A]">
+                              {formatDate(appointment.date)}
+                            </p>
+                            <div className="flex items-center gap-1 text-xs text-[#9CA3AF]">
+                              <Clock className="w-3 h-3" />
+                              {appointment.time}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <StatusBadge status={appointment.status} />
+                      </td>
+
+                      {/* Meeting Link */}
+                      <td className="px-6 py-4">
+                        {editingMeetingLink === appointment._id ? (
+                          <div className="flex items-center gap-1.5">
+                            <input type="url" value={meetingLink}
+                              onChange={(e) => setMeetingLink(e.target.value)}
+                              placeholder="Paste meeting link..."
+                              className="px-2.5 py-1.5 border border-[#E6D5C3] rounded-lg text-xs w-40 outline-none focus:border-[#D4755B] focus:ring-1 focus:ring-[#D4755B]/20" />
+                            <button onClick={() => handleMeetingLinkUpdate(appointment._id)}
+                              className="p-1.5 bg-[#D4755B] text-white rounded-lg hover:bg-[#C05E44] transition-colors">
+                              <Send className="w-3.5 h-3.5" />
                             </button>
-                          )}
-                        </div>
-                      )}
-                    </td>
+                            <button onClick={() => { setEditingMeetingLink(null); setMeetingLink(""); }}
+                              className="p-1.5 bg-[#E6D5C3] text-[#5A5856] rounded-lg hover:bg-[#D4B99A] transition-colors">
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            {appointment.meetingLink ? (
+                              <a href={appointment.meetingLink} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-xs text-[#D4755B] hover:text-[#C05E44] font-medium underline underline-offset-2">
+                                <LinkIcon className="w-3.5 h-3.5" />
+                                View Link
+                              </a>
+                            ) : (
+                              <span className="text-xs text-[#9CA3AF]">No link</span>
+                            )}
+                            {appointment.status === "confirmed" && (
+                              <button onClick={() => { setEditingMeetingLink(appointment._id); setMeetingLink(appointment.meetingLink || ""); }}
+                                className="p-1 text-[#9CA3AF] hover:text-[#D4755B] transition-colors rounded">
+                                <LinkIcon className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </td>
 
-                    {/* Actions */}
-                    <td className="px-6 py-4">
-                      {appointment.status === "pending" && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              handleStatusChange(appointment._id, "confirmed")
-                            }
-                            className="p-1 bg-green-500 text-white rounded hover:bg-green-600"
-                          >
-                            <Check className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleStatusChange(appointment._id, "cancelled")
-                            }
-                            className="p-1 bg-red-500 text-white rounded hover:bg-red-600"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
+                      {/* Actions */}
+                      <td className="px-6 py-4">
+                        {appointment.status === "pending" && (
+                          <div className="flex items-center gap-1.5">
+                            {updatingId === appointment._id ? (
+                              <Loader2 className="w-4 h-4 text-[#9CA3AF] animate-spin" />
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleStatusChange(appointment._id, "confirmed")}
+                                  className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-medium hover:bg-emerald-100 transition-colors">
+                                  <Check className="w-3.5 h-3.5" />
+                                  Confirm
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(appointment._id, "cancelled")}
+                                  className="flex items-center gap-1 px-2.5 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors">
+                                  <X className="w-3.5 h-3.5" />
+                                  Cancel
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
 
           {filteredAppointments.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No appointments found
+            <div className="text-center py-16">
+              <div className="w-14 h-14 bg-[#F5F1E8] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-7 h-7 text-[#E6D5C3]" />
+              </div>
+              <h3 className="text-base font-semibold text-[#1C1B1A] mb-1">No appointments found</h3>
+              <p className="text-sm text-[#9CA3AF]">
+                {searchTerm || filter !== "all" ? "Try adjusting your search or filters" : "No appointments have been scheduled yet"}
+              </p>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

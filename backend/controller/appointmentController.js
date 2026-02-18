@@ -203,14 +203,21 @@ export const updateAppointmentStatus = async (req, res) => {
     }
 
     // Send email notification
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: appointment.userId.email,
-      subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} - BuildEstate`,
-      html: getEmailTemplate(appointment, status)
-    };
+    const recipientEmail = appointment.userId?.email || appointment.guestInfo?.email;
+    if (recipientEmail) {
+      try {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: recipientEmail,
+          subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} - BuildEstate`,
+          html: getEmailTemplate(appointment, status)
+        };
 
-    await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
+      } catch (emailErr) {
+        console.error('Status email failed:', emailErr.message);
+      }
+    }
 
     res.json({
       success: true,
@@ -226,15 +233,15 @@ export const updateAppointmentStatus = async (req, res) => {
   }
 };
 
-// Add scheduling functionality
+// Schedule viewing — supports both authenticated and guest bookings
 export const scheduleViewing = async (req, res) => {
   try {
-    const { propertyId, date, time, notes } = req.body;
-    
-    // req.user is set by the protect middleware
-    
+    const { propertyId, date, time, notes, name, email, phone, message } = req.body;
 
-    const userId = req.user._id;
+    // req.user is set by protect middleware (may be undefined for guest route)
+    const userId = req.user?._id;
+    const guestEmail = email;
+    const guestName = name;
 
     // Check if property exists
     const property = await Property.findById(propertyId);
@@ -260,27 +267,41 @@ export const scheduleViewing = async (req, res) => {
       });
     }
 
-    const appointment = new Appointment({
+    // Build appointment data — link user if logged in, else store guest info
+    const appointmentData = {
       propertyId,
-      userId,
       date,
       time,
-      notes,
-      status: 'pending'
-    });
-
-    await appointment.save();
-    await appointment.populate(['propertyId', 'userId']);
-
-    // Send confirmation email
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: req.user.email,
-      subject: "Viewing Scheduled - BuildEstate",
-      html: getSchedulingEmailTemplate(appointment, date, time, notes)
+      notes: notes || message || '',
+      status: 'pending',
+      ...(userId && { userId }),
+      ...(!userId && { guestInfo: { name: guestName, email: guestEmail, phone } })
     };
 
-    await transporter.sendMail(mailOptions);
+    const appointment = new Appointment(appointmentData);
+    await appointment.save();
+
+    // Populate what we can — userId may not exist for guests
+    const populateFields = ['propertyId'];
+    if (userId) populateFields.push('userId');
+    await appointment.populate(populateFields);
+
+    // Send confirmation email
+    const recipientEmail = userId ? req.user.email : guestEmail;
+    if (recipientEmail) {
+      try {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: recipientEmail,
+          subject: 'Viewing Scheduled - BuildEstate',
+          html: getSchedulingEmailTemplate(appointment, date, time, notes || message || '')
+        };
+        await transporter.sendMail(mailOptions);
+      } catch (emailErr) {
+        console.error('Confirmation email failed:', emailErr.message);
+        // Don't fail the request if email fails
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -311,8 +332,8 @@ export const cancelAppointment = async (req, res) => {
       });
     }
 
-    // Verify user owns this appointment
-    if (appointment.userId._id.toString() !== req.user._id.toString()) {
+    // Verify user owns this appointment (skip for guest bookings cancelled by admin)
+    if (appointment.userId && req.user && appointment.userId._id.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to cancel this appointment'
@@ -324,25 +345,21 @@ export const cancelAppointment = async (req, res) => {
     await appointment.save();
 
     // Send cancellation email
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: appointment.userId.email,
-      subject: 'Appointment Cancelled - BuildEstate',
-      html: `
-        <div style="max-width: 600px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h1 style="color: #2563eb; text-align: center;">Appointment Cancelled</h1>
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p>Your viewing appointment for <strong>${appointment.propertyId.title}</strong> has been cancelled.</p>
-            <p><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${appointment.time}</p>
-            ${appointment.cancelReason ? `<p><strong>Reason:</strong> ${appointment.cancelReason}</p>` : ''}
-          </div>
-          <p style="color: #4b5563;">You can schedule another viewing at any time.</p>
-        </div>
-      `
-    };
+    const recipientEmail = appointment.userId?.email || appointment.guestInfo?.email;
+    if (recipientEmail) {
+      try {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: recipientEmail,
+          subject: 'Appointment Cancelled - BuildEstate',
+          html: getEmailTemplate(appointment, 'cancelled')
+        };
 
-    await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
+      } catch (emailErr) {
+        console.error('Cancellation email failed:', emailErr.message);
+      }
+    }
 
     res.json({
       success: true,
@@ -395,32 +412,21 @@ export const updateAppointmentMeetingLink = async (req, res) => {
     }
 
     // Send email notification with meeting link
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: appointment.userId.email,
-      subject: "Meeting Link Updated - BuildEstate",
-      html: `
-        <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
-          <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Meeting Link Updated</h1>
-          </div>
-          <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
-            <p>Your viewing appointment for <strong>${appointment.propertyId.title}</strong> has been updated with a meeting link.</p>
-            <p><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${appointment.time}</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${meetingLink}" 
-                 style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #2563eb, #1e40af); 
-                        color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                Join Meeting
-              </a>
-            </div>
-          </div>
-        </div>
-      `
-    };
+    const recipientEmail = appointment.userId?.email || appointment.guestInfo?.email;
+    if (recipientEmail) {
+      try {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: recipientEmail,
+          subject: 'Meeting Link Updated - BuildEstate',
+          html: getEmailTemplate(appointment, 'confirmed')
+        };
 
-    await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
+      } catch (emailErr) {
+        console.error('Meeting link email failed:', emailErr.message);
+      }
+    }
 
     res.json({
       success: true,

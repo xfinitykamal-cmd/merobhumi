@@ -16,7 +16,8 @@ import propertyRoutes from './routes/propertyRoutes.js';
 import getStatusPage from './serverweb.js';
 
 
-dotenv.config();
+dotenv.config({ path: './.env.local' });  // local dev
+dotenv.config();                          // .env fallback / Render uses process-level env vars
 
 const app = express();
 

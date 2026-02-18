@@ -49,6 +49,10 @@ const propertySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  googleMapLink: {
+    type: String,
+    default: '',
+  },
 });
 
 const Property = mongoose.model("Property", propertySchema);

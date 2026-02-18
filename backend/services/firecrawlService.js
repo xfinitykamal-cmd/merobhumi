@@ -12,20 +12,17 @@ class FirecrawlService {
         try {
             const formattedLocation = city.toLowerCase().replace(/\s+/g, '-');
             
-            // URLs for property websites (using 99acres as an example)
-            const urls = [
-                `https://www.99acres.com/property-in-${formattedLocation}-ffid/*`
-            ];
+            // Use specific listing page URL — NO wildcard to avoid crawling hundreds of pages
+            const url = `https://www.99acres.com/property-in-${formattedLocation}-ffid`;
 
             const propertyTypePrompt = propertyType === "Flat" ? "Flats" : "Individual Houses";
             
-            // Define schema directly as a JSON schema object
             const propertySchema = {
                 type: "object",
                 properties: {
                     properties: {
                         type: "array",
-                        description: "List of property details",
+                        description: `List of exactly ${limit} property details`,
                         items: {
                             type: "object",
                             properties: {
@@ -43,16 +40,16 @@ class FirecrawlService {
                                 },
                                 price: {
                                     type: "string",
-                                    description: "Price of the property"
+                                    description: "Price of the property in INR"
                                 },
                                 description: {
                                     type: "string",
-                                    description: "Brief description of the property"
+                                    description: "Brief description (max 50 words)"
                                 },
                                 amenities: {
                                     type: "array",
                                     items: { type: "string" },
-                                    description: "List of key amenities"
+                                    description: "Top 3-5 amenities only"
                                 },
                                 area_sqft: {
                                     type: "string",
@@ -67,21 +64,10 @@ class FirecrawlService {
             };
             
             const extractResult = await this.firecrawl.extract(
-                urls,
+                [url],
                 {
-                    prompt: `Extract ONLY ${limit} different ${propertyCategory} ${propertyTypePrompt} from ${city} that cost less than ${maxPrice} crores.
-                    
-                    Requirements:
-                    - Property Category: ${propertyCategory} properties only
-                    - Property Type: ${propertyTypePrompt} only
-                    - Location: ${city}
-                    - Maximum Price: ${maxPrice} crores
-                    - Include essential property details (building name, price, location, area)
-                    - Keep descriptions brief (under 100 words)
-                    - IMPORTANT: Return data for EXACTLY ${limit} different properties. No more.
-                    `,
-                    schema: propertySchema,
-                    enableWebSearch: true
+                    prompt: `From this single page, extract ${limit} ${propertyCategory} ${propertyTypePrompt} in ${city} priced under ${maxPrice} crores. Return exactly ${limit} properties, no more.`,
+                    schema: propertySchema
                 }
             );
 
@@ -89,9 +75,11 @@ class FirecrawlService {
                 throw new Error(`Failed to extract property data: ${extractResult.error || 'Unknown error'}`);
             }
 
-            console.log('Extracted properties count:', extractResult.data.properties.length);
+            // Enforce limit in code — never trust the LLM to respect it
+            const properties = extractResult.data.properties.slice(0, limit);
+            console.log(`[Firecrawl] Extracted ${extractResult.data.properties.length} properties, returning ${properties.length}`);
 
-            return extractResult.data;
+            return { properties };
         } catch (error) {
             console.error('Error finding properties:', error);
             throw error;
@@ -102,28 +90,22 @@ class FirecrawlService {
         try {
             const formattedLocation = city.toLowerCase().replace(/\s+/g, '-');
             
-            // Define schema directly as a JSON schema object
+            // Use specific trends page URL — NO wildcard
+            const url = `https://www.99acres.com/property-rates-and-price-trends-in-${formattedLocation}-prffid`;
+
             const locationSchema = {
                 type: "object",
                 properties: {
                     locations: {
                         type: "array",
-                        description: "List of location data points",
+                        description: `Price trend data for ${limit} localities`,
                         items: {
                             type: "object",
                             properties: {
-                                location: {
-                                    type: "string"
-                                },
-                                price_per_sqft: {
-                                    type: "number"
-                                },
-                                percent_increase: {
-                                    type: "number"
-                                },
-                                rental_yield: {
-                                    type: "number"
-                                }
+                                location: { type: "string" },
+                                price_per_sqft: { type: "number" },
+                                percent_increase: { type: "number" },
+                                rental_yield: { type: "number" }
                             },
                             required: ["location", "price_per_sqft", "percent_increase", "rental_yield"]
                         }
@@ -133,16 +115,10 @@ class FirecrawlService {
             };
             
             const extractResult = await this.firecrawl.extract(
-                [`https://www.99acres.com/property-rates-and-price-trends-in-${formattedLocation}-prffid/*`],
+                [url],
                 {
-                    prompt: `Extract price trends data for ${limit} major localities in ${city}.
-                    IMPORTANT:
-                    - Return data for EXACTLY ${limit} different localities
-                    - Include data points: location name, price per square foot, yearly percent increase, and rental yield
-                    - Format as a list of locations with their respective data
-                    `,
-                    schema: locationSchema,
-                    enableWebSearch: true
+                    prompt: `From this page, extract price trend data for ${limit} major localities in ${city}. Include: location name, price per sqft, yearly percent increase, and rental yield.`,
+                    schema: locationSchema
                 }
             );
 
@@ -150,9 +126,11 @@ class FirecrawlService {
                 throw new Error(`Failed to extract location data: ${extractResult.error || 'Unknown error'}`);
             }
 
-            console.log('Extracted locations count:', extractResult.data.locations.length);
+            // Enforce limit in code
+            const locations = extractResult.data.locations.slice(0, limit);
+            console.log(`[Firecrawl] Extracted ${extractResult.data.locations.length} locations, returning ${locations.length}`);
             
-            return extractResult.data;
+            return { locations };
         } catch (error) {
             console.error('Error fetching location trends:', error);
             throw error;

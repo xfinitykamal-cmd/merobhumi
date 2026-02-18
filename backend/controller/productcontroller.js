@@ -4,7 +4,7 @@ import Property from "../models/propertymodel.js";
 
 const addproperty = async (req, res) => {
     try {
-        const { title, location, price, beds, baths, sqft, type, availability, description, amenities,phone } = req.body;
+        const { title, location, price, beds, baths, sqft, type, availability, description, amenities, phone, googleMapLink } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -41,7 +41,8 @@ const addproperty = async (req, res) => {
             description,
             amenities,
             image: imageUrls,
-            phone
+            phone,
+            googleMapLink: googleMapLink || ''
         });
 
         // Save the product to the database
@@ -79,7 +80,7 @@ const removeproperty = async (req, res) => {
 
 const updateproperty = async (req, res) => {
     try {
-        const { id, title, location, price, beds, baths, sqft, type, availability, description, amenities,phone } = req.body;
+        const { id, title, location, price, beds, baths, sqft, type, availability, description, amenities, phone, googleMapLink } = req.body;
 
         const property = await Property.findById(id);
         if (!property) {
@@ -100,6 +101,7 @@ const updateproperty = async (req, res) => {
             property.description = description;
             property.amenities = amenities;
             property.phone = phone;
+            property.googleMapLink = googleMapLink || '';
             // Keep existing images
             await property.save();
             return res.json({ message: "Property updated successfully", success: true });
@@ -139,6 +141,7 @@ const updateproperty = async (req, res) => {
         property.amenities = amenities;
         property.image = imageUrls;
         property.phone = phone;
+        property.googleMapLink = googleMapLink || '';
 
         await property.save();
         res.json({ message: "Property updated successfully", success: true });

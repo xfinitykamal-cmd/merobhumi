@@ -2,134 +2,160 @@ import { config } from "../config/config.js";
 import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
 import { AzureKeyCredential } from "@azure/core-auth";
 
+const PRIMARY_MODEL = "gpt-4.1-mini";
+const FALLBACK_MODEL = "gpt-4.1-nano";
+
+const SYSTEM_PROMPT = `You are a concise Indian real estate expert assistant.
+Rules:
+- Always respond with valid JSON matching the requested schema.
+- Use INR currency (Lakhs/Crores) for all prices.
+- Keep analysis factual and data-driven — no speculation.
+- Never include markdown, code fences, or extra text outside the JSON.`;
+
 class AIService {
   constructor() {
-    this.azureApiKey = config.azureApiKey;
+    this.apiKey = config.githubApiKey;
+    this.client = ModelClient(
+      "https://models.inference.ai.azure.com",
+      new AzureKeyCredential(this.apiKey)
+    );
   }
 
-  async generateText(prompt) {
-    return this.generateTextWithAzure(prompt);
+  /**
+   * Generate text using GitHub Models with automatic fallback.
+   * Tries PRIMARY_MODEL first; falls back to FALLBACK_MODEL on rate-limit or error.
+   */
+  async generateText(prompt, systemPrompt = SYSTEM_PROMPT) {
+    const result = await this._callModel(PRIMARY_MODEL, prompt, systemPrompt);
+    if (result) return result;
+
+    // Fallback to nano model if primary fails
+    console.warn(`Primary model (${PRIMARY_MODEL}) failed. Falling back to ${FALLBACK_MODEL}...`);
+    const fallbackResult = await this._callModel(FALLBACK_MODEL, prompt, systemPrompt);
+    if (fallbackResult) return fallbackResult;
+
+    return JSON.stringify({ error: "AI service is temporarily unavailable. Please try again later." });
   }
 
-  async generateTextWithAzure(prompt) {
+  async _callModel(model, prompt, systemPrompt) {
     try {
-      console.log(`Starting Azure AI generation at ${new Date().toISOString()}`);
+      console.log(`[AI] Calling ${model} at ${new Date().toISOString()}`);
       const startTime = Date.now();
-      
-      const client = ModelClient(
-        "https://models.inference.ai.azure.com",
-        new AzureKeyCredential(this.azureApiKey)
-      );
 
-      const response = await client.path("/chat/completions").post({
+      const response = await this.client.path("/chat/completions").post({
         body: {
           messages: [
-            { 
-              role: "system", 
-              content: "You are an AI real estate expert assistant that provides concise, accurate analysis of property data."
-            },
-            { 
-              role: "user", 
-              content: prompt 
-            }
+            { role: "system", content: systemPrompt },
+            { role: "user", content: prompt }
           ],
-          model: "gpt-4o",
-          temperature: 0.7,
+          model,
+          temperature: 0.3,
           max_tokens: 800,
           top_p: 1
         }
       });
 
-      const endTime = Date.now();
-      console.log(`Azure AI generation completed in ${(endTime - startTime) / 1000} seconds`);
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`[AI] ${model} responded in ${elapsed}s`);
 
       if (isUnexpected(response)) {
-        throw new Error(response.body.error.message || "Azure API error");
+        console.error(`[AI] ${model} error:`, response.body.error?.message);
+        return null;
       }
-      
+
       return response.body.choices[0].message.content;
     } catch (error) {
-      console.error("Error generating text with Azure:", error);
-      return `Error: ${error.message}`;
+      console.error(`[AI] ${model} exception:`, error.message);
+      return null;
     }
   }
 
-  // Helper method to filter and clean property data before analysis
+  // ── Data Preparation ──────────────────────────────────────────
+
   _preparePropertyData(properties, maxProperties = 3) {
-    // Limit the number of properties
-    const limitedProperties = properties.slice(0, maxProperties);
-    
-    // Clean and simplify each property
-    return limitedProperties.map(property => ({
-      building_name: property.building_name,
-      property_type: property.property_type,
-      location_address: property.location_address,
-      price: property.price,
-      area_sqft: property.area_sqft,
-      // Extract just a few key amenities
-      amenities: Array.isArray(property.amenities) 
-        ? property.amenities.slice(0, 5) 
-        : [],
-      // Truncate description to save tokens
-      description: property.description 
-        ? property.description.substring(0, 150) + (property.description.length > 150 ? '...' : '')
+    return properties.slice(0, maxProperties).map(p => ({
+      building_name: p.building_name,
+      property_type: p.property_type,
+      location_address: p.location_address,
+      price: p.price,
+      area_sqft: p.area_sqft,
+      amenities: Array.isArray(p.amenities) ? p.amenities.slice(0, 5) : [],
+      description: p.description
+        ? p.description.substring(0, 150) + (p.description.length > 150 ? '...' : '')
         : ''
     }));
   }
 
-  // Helper method to filter and clean location data
   _prepareLocationData(locations, maxLocations = 5) {
-    // Limit the number of locations
     return locations.slice(0, maxLocations);
   }
 
-  async analyzeProperties(
-    properties,
-    city,
-    maxPrice,
-    propertyCategory,
-    propertyType
-  ) {
-    // Prepare limited and cleaned property data
+  // ── Analysis Methods ──────────────────────────────────────────
+
+  async analyzeProperties(properties, city, maxPrice, propertyCategory, propertyType) {
     const preparedProperties = this._preparePropertyData(properties);
 
-    const prompt = `As a real estate expert, analyze these properties:
+    const prompt = `Analyze these ${propertyCategory} ${propertyType} properties in ${city} (budget: ≤${maxPrice} Cr):
 
-        Properties Found in ${city}:
-        ${JSON.stringify(preparedProperties, null, 2)}
+${JSON.stringify(preparedProperties)}
 
-        INSTRUCTIONS:
-        1. Focus ONLY on these properties that match:
-           - Property Category: ${propertyCategory}
-           - Property Type: ${propertyType}
-           - Maximum Price: ${maxPrice} crores
-        2. Provide a brief analysis with these sections:
-           - Property Overview (basic facts about each)
-           - Best Value Analysis (which offers the best value)
-           - Quick Recommendations
-
-        Keep your response concise and focused on these properties only.
-        `;
+Respond ONLY with this JSON schema:
+{
+  "overview": [
+    {
+      "name": "building name",
+      "price": "price string",
+      "area": "sqft string",
+      "location": "address",
+      "highlight": "one-line standout feature"
+    }
+  ],
+  "best_value": {
+    "name": "building name",
+    "reason": "why it offers the best value in 1-2 sentences"
+  },
+  "recommendations": [
+    "actionable recommendation 1",
+    "actionable recommendation 2",
+    "actionable recommendation 3"
+  ]
+}`;
 
     return this.generateText(prompt);
   }
 
   async analyzeLocationTrends(locations, city) {
-    // Prepare limited location data
     const preparedLocations = this._prepareLocationData(locations);
 
-    const prompt = `As a real estate expert, analyze these location price trends for ${city}:
+    const prompt = `Analyze these real estate price trends for ${city}:
 
-        ${JSON.stringify(preparedLocations, null, 2)}
+${JSON.stringify(preparedLocations)}
 
-        Please provide:
-        1. A brief summary of price trends for each location
-        2. Which areas are showing the highest appreciation
-        3. Which areas offer the best rental yield
-        4. Quick investment recommendations based on this data
-
-        Keep your response concise (maximum 300 words).
-        `;
+Respond ONLY with this JSON schema:
+{
+  "trends": [
+    {
+      "location": "area name",
+      "price_per_sqft": 0,
+      "yearly_change_pct": 0,
+      "rental_yield_pct": 0,
+      "outlook": "brief 1-line outlook"
+    }
+  ],
+  "top_appreciation": {
+    "location": "area with highest price growth",
+    "reason": "why in 1 sentence"
+  },
+  "best_rental_yield": {
+    "location": "area with best rental returns",
+    "reason": "why in 1 sentence"
+  },
+  "investment_tips": [
+    "tip 1",
+    "tip 2",
+    "tip 3"
+  ]
+}`;
 
     return this.generateText(prompt);
   }

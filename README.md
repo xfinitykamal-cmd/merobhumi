@@ -29,14 +29,14 @@
   <a href="https://buildestate.vercel.app">
     <img src="https://img.shields.io/badge/Live_Demo-4285F4?style=for-the-badge&logoColor=white" alt="Live Demo">
   </a>
-  <a href="./API_TESTING_GUIDE.md">
+  <a href="https://real-estate-website-backend-zfu7.onrender.com/">
     <img src="https://img.shields.io/badge/📚_API_Docs-34A853?style=for-the-badge&logoColor=white" alt="API Docs">
   </a>
-  <a href="./ADMIN_PANEL_GUIDE.md">
+  <a href="https://real-estate-website-admin.onrender.com/">
     <img src="https://img.shields.io/badge/🎯_Admin_Panel-EA4335?style=for-the-badge&logoColor=white" alt="Admin Panel">
   </a>
-  <a href="./COMPLETE_PROJECT_SETUP_GUIDE.md">
-    <img src="https://img.shields.io/badge/🔧_Setup_Guide-FBBC04?style=for-the-badge&logoColor=black" alt="Setup Guide">
+  <a href="https://aayush-vaghela.vercel.app/">
+    <img src="https://img.shields.io/badge/👨‍💻_Portfolio-000000?style=for-the-badge&logoColor=white" alt="Portfolio">
   </a>
 </p>
 
@@ -83,7 +83,6 @@
 
 > **BuildEstate** is a cutting-edge, full-stack real estate platform that transforms property discovery and management through AI-powered insights, seamless user experience, and comprehensive administrative tools.
 
-
 <summary><h3>🎯 Key Features</h3></summary>
 
 <div align="center">
@@ -98,12 +97,14 @@
 - Real-time market insights
 
 ### 🤖 **AI Integration**
+
 - Property valuation analysis
 - Market trend predictions
 - Investment opportunity scoring
 - Automated property descriptions
 
 ### 🔐 **Security & Authentication**
+
 - JWT-based secure authentication
 - Role-based access control
 - Multi-factor authentication ready
@@ -112,18 +113,21 @@
 <td width="50%">
 
 ### 📱 **Modern User Experience**
+
 - Responsive design across all devices
 - Progressive Web App (PWA) ready
 - Dark/Light mode switching
 - Smooth animations & transitions
 
 ### 📊 **Analytics Dashboard**
+
 - Real-time property analytics
 - User engagement metrics
 - Revenue tracking & reporting
 - Interactive data visualizations
 
 ### 📧 **Communication System**
+
 - Automated email notifications
 - In-app messaging system
 - Appointment scheduling
@@ -133,7 +137,6 @@
 </tr>
 </table>
 </div>
-
 
 <!-- Architecture Section -->
 <div align="center">
@@ -150,25 +153,25 @@ graph TB
         A[User Portal<br/>React 18 + Vite<br/>Port: 5173]
         B[Admin Dashboard<br/>React 18 + Chart.js<br/>Port: 5174]
     end
-    
+
     subgraph "⚙️ Backend Layer"
         C[API Server<br/>Express.js + Node.js<br/>Port: 4000]
         D[AI Services<br/>Azure AI + OpenAI]
         E[Email Service<br/>Nodemailer + SMTP]
     end
-    
+
     subgraph "💾 Data Layer"
         F[(MongoDB Atlas<br/>Database)]
         G[ImageKit CDN<br/>Media Storage]
     end
-    
+
     A --> C
     B --> C
     C --> D
     C --> E
     C --> F
     C --> G
-    
+
     style A fill:#61DAFB,stroke:#333,stroke-width:2px,color:#000
     style B fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
     style C fill:#339933,stroke:#333,stroke-width:2px,color:#fff
@@ -482,13 +485,13 @@ VITE_ADMIN_NAME=BuildEstate Admin
 **Modern Property Discovery Platform**
 
 - 🏠 Interactive property browsing
-- 🔍 AI-powered search & filtering  
+- 🔍 AI-powered search & filtering
 - 👤 User authentication & profiles
 - 📅 Appointment booking system
 - 🎨 Progressive Web App (PWA)
 - 📱 Mobile-first responsive design
 - ⚡ SEO optimized with structured data
-        
+
 <a href="http://localhost:5173">
   <img src="https://img.shields.io/badge/View_Live-4285F4?style=for-the-badge&logoColor=white" alt="View Frontend">
 </a>
@@ -503,12 +506,12 @@ VITE_ADMIN_NAME=BuildEstate Admin
 
 - 📊 Real-time analytics dashboard
 - 🏠 Property management (CRUD)
-- 👥 User & appointment management  
+- 👥 User & appointment management
 - 📈 Interactive charts & reports
 - 🔧 System configuration tools
 - 📤 Bulk operations & data export
 - 🎯 Role-based access control
-        
+
 <a href="http://localhost:5174">
   <img src="https://img.shields.io/badge/Admin_Panel-EA4335?style=for-the-badge&logoColor=white" alt="View Admin">
 </a>
@@ -525,11 +528,11 @@ VITE_ADMIN_NAME=BuildEstate Admin
 - 🚀 RESTful API with 50+ endpoints
 - 🔐 JWT authentication system
 - 🤖 AI service integrations
-- 📧 Email notification system  
+- 📧 Email notification system
 - 🖼️ Image upload & processing
 - 🛡️ Security & rate limiting
 - 📊 Request logging & monitoring
-        
+
 <a href="http://localhost:4000">
   <img src="https://img.shields.io/badge/API_Docs-34A853?style=for-the-badge&logoColor=white" alt="View API">
 </a>
@@ -546,7 +549,7 @@ VITE_ADMIN_NAME=BuildEstate Admin
 
 ```
 React 18          → Modern component-based architecture
-Vite             → Lightning-fast build tool & dev server  
+Vite             → Lightning-fast build tool & dev server
 TailwindCSS      → Utility-first CSS framework
 Framer Motion    → Smooth animations & transitions
 React Router v7  → Client-side navigation
@@ -621,7 +624,7 @@ npm run dev
 
 # Individual services
 npm run dev:backend
-npm run dev:frontend  
+npm run dev:frontend
 npm run dev:admin
 
 # Quick setup
@@ -701,7 +704,7 @@ gitGraph
 1. 🍴 **Fork** the repository
 2. 🌿 **Create** a feature branch (`git checkout -b feature/amazing-feature`)
 3. ✍️ **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. 📤 **Push** to the branch (`git push origin feature/amazing-feature`)  
+4. 📤 **Push** to the branch (`git push origin feature/amazing-feature`)
 5. 🔀 **Open** a Pull Request
 
 </details>
@@ -737,6 +740,7 @@ gitGraph
 </div>
 
 **Commit Message Format:**
+
 ```
 type(scope): description
 
@@ -835,7 +839,7 @@ docs(readme): update installation guide
 # Frontend to Vercel
 cd frontend && vercel --prod
 
-# Admin Panel to Vercel  
+# Admin Panel to Vercel
 cd admin && vercel --prod
 
 # Backend to Railway
@@ -848,6 +852,7 @@ cd admin && vercel --prod
 <summary><h4>🔧 Environment Setup Templates</h4></summary>
 
 **Backend Environment Template:**
+
 ```bash
 # Core Configuration
 NODE_ENV=production
@@ -959,7 +964,7 @@ We love contributions! Please see our [Contributing Guidelines](./CONTRIBUTING.m
   <img src="https://contrib.rocks/image?repo=AAYUSH412/Real-Estate-Website" alt="Contributors">
 </a>
 
-*Become a contributor and see your avatar here!*
+_Become a contributor and see your avatar here!_
 
 </div>
 

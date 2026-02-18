@@ -1,11 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion, AnimatePresence } from "framer-motion";
-
-
-
-
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";
@@ -23,14 +19,11 @@ import Add from "./pages/Add";
 import Update from "./pages/Update";
 import Appointments from "./pages/Appointments";
 
-// Config
-import { APP_CONSTANTS } from "./config/constants";
-
 // Page transition variants
 const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
 };
 
 // App Layout component
@@ -39,17 +32,16 @@ const AppLayout = () => {
   const isLoginPage = location.pathname === '/login';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF8F4]">
       {!isLoginPage && <Navbar />}
-      
+
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
+          variants={pageVariants}
           initial="initial"
           animate="animate"
           exit="exit"
-          variants={pageVariants}
-          transition={{ duration: 0.3 }}
           className={!isLoginPage ? "pt-16" : ""}
         >
           <Routes location={location}>
@@ -83,29 +75,16 @@ const App = () => {
     >
       <AuthProvider>
         <AppLayout />
-        
-        {/* Toast Notifications */}
-        <Toaster 
+
+        {/* Toast Notifications — Sonner */}
+        <Toaster
           position="top-right"
+          richColors
+          closeButton
           toastOptions={{
-            duration: APP_CONSTANTS.DEFAULT_TOAST_DURATION,
             style: {
-              background: '#333',
-              color: '#fff',
-              borderRadius: '8px',
+              fontFamily: 'Manrope, sans-serif',
               fontSize: '14px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10B981',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#EF4444',
-                secondary: '#fff',
-              },
             },
           }}
         />
