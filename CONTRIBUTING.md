@@ -24,50 +24,52 @@ There are several ways you can contribute to the BuildEstate project:
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/AAYUSH412/Real-Estate-Website.git
-   cd buildEstate
+   git clone https://github.com/YOUR_USERNAME/Real-Estate-Website.git
+   cd Real-Estate-Website
    ```
-3. Install dependencies:
+3. Install dependencies for each app:
    ```bash
-   # Install backend dependencies
-   cd backend
-   npm install
-
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
-
-   # Install admin dependencies
-   cd ../admin
-   npm install
+   cd backend && npm install
+   cd ../frontend && npm install
+   cd ../admin && npm install
    ```
-4. Create your `.env.local` files as described in the [README.md](README.md)
+4. Set up environment files:
+   ```bash
+   cp backend/.env.example backend/.env.local
+   cp frontend/.env.example frontend/.env.local
+   cp admin/.env.example admin/.env.local
+   ```
+5. Edit each `.env.local` with your credentials — see [README.md](README.md) for the full list of required variables
 
 ### Making Changes
 
 1. Create a new branch:
    ```bash
    git checkout -b feature/your-feature-name
+   # or for bug fixes:
+   git checkout -b fix/your-bug-description
    ```
-2. Make your changes
-3. Test your changes thoroughly
-4. Commit your changes:
+2. Make your changes and test thoroughly
+3. Commit using conventional commits:
    ```bash
-   git commit -m "Brief description of changes"
+   git commit -m "feat: add your feature"
+   git commit -m "fix: resolve the bug"
+   git commit -m "docs: update readme"
    ```
-5. Push to your fork:
+4. Push to your fork:
    ```bash
    git push origin feature/your-feature-name
    ```
-6. Create a pull request from your branch to the main repository
+5. Open a Pull Request against the `main` branch
 
 ## Pull Request Guidelines
 
-- Ensure your code follows the existing style patterns and practices
-- Include clear descriptions of the changes made
-- Update documentation if necessary
-- Make sure all tests pass
-- Keep pull requests focused on a single concern/feature
+- Keep PRs focused on a single feature or fix
+- Include a clear description of what was changed and why
+- Reference any related issues (e.g. `Closes #42`)
+- Update documentation if your change affects setup or usage
+- Ensure `npm run build` succeeds in the affected app(s)
+- Run `npm run lint` and fix any errors before submitting
 
 ## Code Style
 
@@ -88,8 +90,16 @@ There are several ways you can contribute to the BuildEstate project:
 - Document API changes in the appropriate documentation files
 - Keep code comments up-to-date
 
+## Project Structure Quick Reference
+
+| Directory | App | Port |
+|---|---|---|
+| `backend/` | Node.js + Express REST API | 4000 |
+| `frontend/` | React + TypeScript user site | 5173 |
+| `admin/` | React admin dashboard | 5174 |
+
 ## Questions?
 
-If you have any questions or need help, feel free to open an issue or contact the maintainers.
+Feel free to [open an issue](https://github.com/AAYUSH412/Real-Estate-Website/issues) or reach out at **aayushvaghela12@gmail.com**.
 
 Thank you for contributing to BuildEstate!

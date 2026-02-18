@@ -1,79 +1,101 @@
-# 🎯 BuildEstate Admin Panel
+# BuildEstate — Admin Panel
 
-The administrative dashboard for managing the BuildEstate platform. Built with **React**, **Vite**, and **TailwindCSS**.
+Administrative dashboard for managing the BuildEstate real estate platform. Built with React, Vite, and Tailwind CSS.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Dashboard-EA4335?style=for-the-badge&logo=render)](https://real-estate-website-admin.onrender.com/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Aayush_Vaghela-000000?style=for-the-badge)](https://aayush-vaghela.vercel.app/)
 
-## ✨ Key Capabilities
+## Key Features
 
-- **Dashboard Analytics**: Real-time charts for properties, users, and revenue.
-- **Property Management**: Create, update, and delete property listings.
-- **User Management**: View and manage registered users.
-- **Appointment Scheduling**: Manage property viewing appointments.
-- **Bulk Upload**: Import multiple properties via CSV/Excel.
+- **Dashboard Analytics** — Real-time charts for properties, users, and appointment stats
+- **Property Management** — Add, update, and delete property listings with image upload
+- **Appointment Management** — View, approve, cancel, and add meeting links to bookings
+- **User Overview** — View registered users
+- **Image Upload** — Upload up to 4 property images via ImageKit CDN
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework**: React 18 + Vite
-- **Styling**: TailwindCSS
-- **Charts**: Chart.js / Recharts
-- **Icons**: Lucide React
-- **Notifications**: Sonner
+- **Framework:** React 18 + Vite 6
+- **Styling:** Tailwind CSS v3
+- **Charts:** Chart.js
+- **Icons:** Lucide React
+- **Notifications:** Sonner
+- **HTTP Client:** Axios
 
-## 🚀 Getting Started
 
-### Prerequisites
+## Quick Start
 
-- Node.js 18+
-- npm 8+
+```bash
+cd admin
+npm install
+cp .env.example .env.local
+npm run dev
+```
 
-### Installation
+Admin panel runs at **http//localhost:5174**
 
-1.  **Navigate to the admin directory:**
+## Environment Variables
 
-    ```bash
-    cd admin
-    ```
+Create `admin/.env.local`:
 
-2.  **Install dependencies:**
+```env
+VITE_BACKEND_URL=http://localhost:4000
+```
 
-    ```bash
-    npm install
-    ```
+For production set VITE_BACKEND_URL to your deployed backend URL.
 
-3.  **Configure Environment Variables:**
-    Create a `.env.local` file in the `admin` directory:
+## Pages
 
-    ```env
-    # Points to your backend API
-    VITE_BACKEND_URL=http://localhost:4000
-    ```
+| Page | Route | Description |
+|---|---|---|
+| Login | `/` | Admin authentication |
+| Dashboard | `/dashboard` | Stats overview with charts |
+| Add Property | `/add` | Add new listing with images |
+| List Properties | `/list` | View and manage all listings |
+| Update Property | `/update/:id` | Edit existing listing |
+| Appointments | `/appointments` | View and manage all bookings |
 
-4.  **Start Development Server:**
-    ```bash
-    npm run dev
-    ```
-    The dashboard will run at `http://localhost:5174`.
+## Project Structure
 
-## 📜 Available Scripts
+```
+admin/src/
+├── components/  login Navbar
+├── config/      constants backend URL property types
+├── contexts/    AdminContext auth state
+├── pages/
+│   ├── Dashboard.jsx
+│   ├── Add.jsx
+│   ├── List.jsx
+│   ├── Update.jsx
+│   └── Appointments.jsx
+└── App.jsx
+```
 
-| Script            | Description                           |
-| :---------------- | :------------------------------------ |
-| `npm run dev`     | Starts the development server         |
-| `npm run build`   | Builds the app for production         |
-| `npm run preview` | Previews the production build locally |
-| `npm run lint`    | Runs ESLint for code quality          |
+## Scripts
 
-## 🌐 Deployment
+| Script | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
 
-This project is optimized for deployment on **Render** or **Vercel**.
+## Deployment
 
-1.  **Push to GitHub.**
-2.  **Import project** in your hosting provider.
-3.  **Set Environment Variables**:
-    - `VITE_BACKEND_URL`: `https://real-estate-website-backend-zfu7.onrender.com`
-4.  **Deploy.**
+1. Push to GitHub
+2. Create a Web Service on Render or import to Vercel
+3. Set Root Directory to `admin`
+4. Build Command: `npm install`
+5. Publish Directory: `dist`
+6. Add env var: `VITE_BACKEND_URL` = your backend URL
+
+Deployed at: **https://real-estate-website-admin.onrender.com**
+
+## Related
+
+- [Backend README](../backend/README.md)
+- [Frontend README](../frontend/README.md)
+- [Root README](../README.md)
 
 ---
 

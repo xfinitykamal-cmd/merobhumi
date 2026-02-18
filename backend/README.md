@@ -1,76 +1,40 @@
-<div align="center">
+# BuildEstate — Backend API
 
-# ⚙️ BuildEstate Backend
+REST API server for the BuildEstate real estate platform. Built with Node.js, Express, and MongoDB.
 
-### Robust Node.js API Server with AI Integration
-
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.21+-000000?style=flat-square&logo=express)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-8.9+-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
-[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens)](https://jwt.io/)
-
-[🔗 API Docs](../API_TESTING_GUIDE.md) • [📚 Backend Guide](../BACKEND_DOCUMENTATION.md) • [🐛 Report Issues](https://github.com/AAYUSH412/Real-Estate-Website/issues)
-
-[![Live Demo](https://img.shields.io/badge/Live_API-On_Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://real-estate-website-backend-zfu7.onrender.com/)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Aayush_Vaghela-000000?style=for-the-badge)](https://aayush-vaghela.vercel.app/)
-
-</div>
+[![Live API](https://img.shields.io/badge/Live_API-On_Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://real-estate-website-backend-zfu7.onrender.com/)
 
 ---
 
-## ✨ Features
+## Features
 
-### � **Authentication & Security**
-
-- **JWT Authentication** - Secure token-based authentication
-- **Password Hashing** - Bcrypt for secure password storage
-- **Rate Limiting** - Protection against DDoS and brute force
-- **CORS Protection** - Configurable cross-origin policies
-- **Input Validation** - Comprehensive request validation
-- **Security Headers** - Helmet.js for security headers
-
-### 🏠 **Property Management**
-
-- **CRUD Operations** - Complete property lifecycle management
-- **Image Upload** - ImageKit integration for media handling
-- **Search & Filtering** - Advanced property search capabilities
-- **AI Recommendations** - Machine learning property suggestions
-- **Geolocation** - Location-based property queries
-- **Bulk Operations** - Admin bulk property management
-
-### 🤖 **AI & Intelligence**
-
-- **Azure AI Services** - Cognitive services integration
-- **OpenAI Integration** - GPT-powered property analysis
-- **Web Scraping** - Firecrawl for market data collection
-- **Market Analysis** - Real-time property valuation
-- **Investment Insights** - ROI and trend predictions
-- **Smart Matching** - User preference learning
-
-### 📧 **Communication**
-
-- **Email Notifications** - Automated email system
-- **Appointment Management** - Booking and scheduling system
-- **User Communications** - Contact form handling
-- **Admin Notifications** - System alerts and reports
+- **JWT Authentication** — Secure token-based auth with bcrypt password hashing
+- **Property CRUD** — Add, list, update, delete properties with up to 4 images each
+- **Image Upload** — Multer file handling → ImageKit CDN storage
+- **Appointment Scheduling** — Guest and authenticated bookings with email notifications
+- **AI Property Search** — GPT-4.1 (GitHub Models) + Firecrawl web scraping
+- **Location Trends** — Scraped market data for Indian cities
+- **Contact Forms** — Submissions stored to MongoDB
+- **Admin Dashboard Stats** — Property, user, and appointment counts
+- **Rate Limiting** — express-rate-limit for DDoS protection
+- **Security Headers** — Helmet.js middleware
+- **Email Notifications** — Branded transactional emails via Brevo SMTP
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| Category           | Technology        | Purpose                             |
-| ------------------ | ----------------- | ----------------------------------- |
-| **Runtime**        | Node.js 18+       | JavaScript runtime environment      |
-| **Framework**      | Express.js        | Web application framework           |
-| **Database**       | MongoDB 8.9+      | NoSQL document database             |
-| **ODM**            | Mongoose          | MongoDB object modeling             |
-| **Authentication** | JWT + Bcrypt      | Secure authentication system        |
-| **File Upload**    | Multer + ImageKit | File handling and CDN               |
-| **Email**          | Nodemailer        | Email delivery system               |
-| **AI Services**    | Azure AI + OpenAI | Artificial intelligence integration |
-| **Security**       | Helmet + CORS     | Security middleware                 |
-| **Validation**     | Express Validator | Input validation                    |
-| **Environment**    | Dotenv            | Environment configuration           |
+| Category | Technology | Purpose |
+|---|---|---|
+| **Runtime** | Node.js 18+ | JavaScript runtime |
+| **Framework** | Express.js | Web application framework |
+| **Database** | MongoDB Atlas | NoSQL document database |
+| **ODM** | Mongoose | MongoDB object modeling |
+| **Authentication** | JWT + Bcrypt | Secure auth system |
+| **File Upload** | Multer + ImageKit | File handling and CDN |
+| **Email** | Nodemailer + Brevo | Transactional emails |
+| **AI Services** | GPT-4.1 + Firecrawl | Property search and scraping |
+| **Security** | Helmet + CORS + rate-limit | Security middleware |
 
 ---
 
@@ -105,58 +69,38 @@ Server starts at `http://localhost:4000`
 
 ### Environment Configuration
 
-Create `.env.local` file with the following variables:
+Create `backend/.env.local` with these variables (see `.env.example` for the template):
 
 ```bash
-# Application
-NODE_ENV=development
 PORT=4000
-APP_NAME=BuildEstate API
+NODE_ENV=development
 
-# Database Configuration
-MONGODB_URI=mongodb://localhost:27017/buildestate
-# Or MongoDB Atlas
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/buildestate?retryWrites=true&w=majority
+# MongoDB Atlas connection string
+MONGO_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/?retryWrites=true&w=majority
 
-# Authentication
-JWT_SECRET=your-super-secure-jwt-secret-key-minimum-32-characters
-JWT_EXPIRES_IN=7d
-BCRYPT_ROUNDS=12
+# JWT (generate with: openssl rand -hex 32)
+JWT_SECRET=your_jwt_secret_here
 
-# CORS Configuration
-CORS_ORIGIN=http://localhost:5173,http://localhost:5174
-ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174
+# Brevo SMTP
+SMTP_USER=your_smtp_login
+SMTP_PASS=your_smtp_password
+EMAIL=your_sender_email@gmail.com
 
-# Email Configuration (Gmail example)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-specific-password
+# Admin credentials
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your_admin_password
 
-# Image Storage (ImageKit)
-IMAGEKIT_PUBLIC_KEY=your-imagekit-public-key
-IMAGEKIT_PRIVATE_KEY=your-imagekit-private-key
-IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id/
+# Frontend URL (for CORS + email links)
+WEBSITE_URL=http://localhost:5173
 
-# AI Services (Optional but recommended)
-AZURE_AI_ENDPOINT=https://your-region.api.cognitive.microsoft.com/
-AZURE_AI_KEY=your-azure-cognitive-services-key
-OPENAI_API_KEY=sk-your-openai-api-key
-FIRECRAWL_API_KEY=your-firecrawl-api-key
+# ImageKit
+IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
 
-# Security
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-SESSION_SECRET=your-session-secret-key
-
-# Logging
-LOG_LEVEL=debug
-LOG_FORMAT=combined
-
-# File Upload
-MAX_FILE_SIZE=5242880
-ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp
+# AI Services (optional — only needed for AI Property Hub)
+FIRECRAWL_API_KEY=your_firecrawl_api_key
+GITHUB_MODELS_API_KEY=your_github_pat_token
 ```
 
 ---
@@ -218,509 +162,101 @@ backend/
 
 ---
 
-## 📡 API Documentation
+## API Endpoints
 
-### Authentication Endpoints
+### Authentication (`/api/users`)
 
-```bash
-POST   /api/users/register     # User registration
-POST   /api/users/login        # User login
-GET    /api/users/profile      # Get user profile (protected)
-PUT    /api/users/profile      # Update user profile (protected)
-POST   /api/users/logout       # User logout
-POST   /api/users/forgot       # Forgot password
-POST   /api/users/reset        # Reset password
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/register` | — | Register new user |
+| POST | `/login` | — | Login (returns JWT) |
+| POST | `/admin` | — | Admin login |
+| GET | `/me` | JWT | Get current user profile |
+| POST | `/forgot` | — | Send password reset email |
+| POST | `/reset/:token` | — | Reset password with token |
 
-### Property Endpoints
+### Properties (`/api/products`)
 
-```bash
-GET    /api/properties         # Get all properties
-GET    /api/properties/:id     # Get property by ID
-POST   /api/properties         # Create property (admin)
-PUT    /api/properties/:id     # Update property (admin)
-DELETE /api/properties/:id     # Delete property (admin)
-POST   /api/properties/search  # Advanced property search
-POST   /api/properties/favorite # Add/remove favorite
-GET    /api/properties/featured # Get featured properties
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/list` | — | List all properties |
+| GET | `/single/:id` | — | Get property by ID |
+| POST | `/add` | Admin | Add property (multipart: up to 4 images) |
+| POST | `/update` | Admin | Update property (multipart) |
+| POST | `/remove` | Admin | Delete property |
 
-### Appointment Endpoints
+### Appointments (`/api/appointments`)
 
-```bash
-GET    /api/appointments        # Get appointments (protected)
-POST   /api/appointments        # Book appointment
-PUT    /api/appointments/:id    # Update appointment (admin)
-DELETE /api/appointments/:id    # Cancel appointment
-GET    /api/appointments/user   # Get user appointments
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/schedule` | — | Schedule viewing (guest) |
+| POST | `/schedule/auth` | JWT | Schedule viewing (logged in) |
+| GET | `/user` | — | Get appointments by user email |
+| GET | `/upcoming` | — | Get upcoming appointments |
+| PUT | `/cancel/:id` | — | Cancel an appointment |
+| PUT | `/feedback/:id` | — | Submit feedback |
+| GET | `/all` | Admin | Get all appointments |
+| GET | `/stats` | Admin | Appointment statistics |
+| PUT | `/status` | Admin | Update appointment status |
+| PUT | `/update-meeting` | Admin | Add meeting link |
 
-### Admin Endpoints
+### Admin (`/api/admin`)
 
-```bash
-GET    /api/admin/stats         # Dashboard statistics
-GET    /api/admin/users         # Manage users
-GET    /api/admin/properties    # Property management
-GET    /api/admin/appointments  # Appointment management
-POST   /api/admin/bulk-upload   # Bulk property upload
-GET    /api/admin/analytics     # Advanced analytics
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/stats` | Admin | Dashboard statistics |
+| GET | `/appointments` | Admin | All appointments |
+| PUT | `/appointments/status` | Admin | Update status |
 
-### AI Services
+### Contact Forms (`/api/forms`)
 
-```bash
-POST   /api/ai/analyze          # Property analysis
-POST   /api/ai/recommend        # Get recommendations
-POST   /api/ai/valuation        # Property valuation
-POST   /api/ai/market-trends    # Market analysis
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/submit` | — | Submit contact form |
 
-For detailed API testing examples, see [API_TESTING_GUIDE.md](../API_TESTING_GUIDE.md)
+### AI Search (`/api`)
 
----
-
-## 💻 Development
-
-### Available Scripts
-
-```bash
-# Development
-npm run dev              # Start with nodemon (auto-reload)
-npm start                # Start production server
-npm run build            # Prepare for deployment
-
-# Database
-npm run db:seed          # Seed database with sample data
-npm run db:reset         # Reset database
-npm run db:backup        # Backup database
-
-# Testing (when configured)
-npm run test             # Run tests
-npm run test:watch       # Run tests in watch mode
-npm run test:coverage    # Generate coverage report
-
-# Utilities
-npm run lint             # Run ESLint
-npm run lint:fix         # Fix ESLint issues
-npm run docs             # Generate API documentation
-```
-
-### Development Workflow
-
-1. **Create New Feature**
-
-   ```bash
-   # Create model
-   touch models/newModel.js
-
-   # Create controller
-   touch controller/newController.js
-
-   # Create routes
-   touch routes/newRoute.js
-
-   # Update server.js to include routes
-   ```
-
-2. **Database Operations**
-
-   ```bash
-   # Connect to MongoDB
-   mongo buildestate
-
-   # View collections
-   show collections
-
-   # Query data
-   db.properties.find().limit(5)
-   ```
-
-3. **Testing APIs**
-
-   ```bash
-   # Use curl for quick testing
-   curl -X GET http://localhost:4000/api/properties
-
-   # Or use Postman/Insomnia
-   ```
-
-### Code Style Guidelines
-
-- Use **ES6+ features** (async/await, destructuring, etc.)
-- Follow **RESTful API conventions**
-- Implement **proper error handling**
-- Use **middleware for common functionality**
-- Add **comprehensive input validation**
-- Write **clear, descriptive comments**
-
-### Controller Example
-
-```javascript
-// controller/propertyController.js
-import Property from "../models/propertymodel.js";
-import { validationResult } from "express-validator";
-
-// Get all properties with pagination
-export const getProperties = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const properties = await Property.find({ status: "active" })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("owner", "name email");
-
-    const total = await Property.countDocuments({ status: "active" });
-
-    res.status(200).json({
-      success: true,
-      data: properties,
-      pagination: {
-        current: page,
-        pages: Math.ceil(total / limit),
-        total,
-      },
-    });
-  } catch (error) {
-    console.error("Get properties error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch properties",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
-```
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/ai/search` | — | AI-powered property search |
+| POST | `/properties/search` | — | Property search |
+| GET | `/locations/:city/trends` | — | Location trends data |
 
 ---
 
-## 🛡️ Security
+## Scripts
 
-### Implemented Security Measures
+| Script | Description |
+|---|---|
+| `npm run dev` | Start with nodemon (auto-restart on changes) |
+| `npm start` | Start production server |
 
-- **JWT Authentication** with secure token generation
-- **Password Hashing** using bcrypt with salt rounds
-- **Rate Limiting** to prevent abuse
-- **CORS Configuration** for cross-origin requests
-- **Input Validation** and sanitization
-- **Security Headers** via Helmet.js
-- **Environment Variables** for sensitive data
-- **MongoDB Injection Prevention**
+## How Image Upload Works
 
-### Security Best Practices
+1. Admin panel uploads images via the form
+2. **Multer** saves files temporarily to `uploads/`
+3. Files are pushed to **ImageKit CDN** via the SDK
+4. CDN URLs are stored in MongoDB
+5. Temporary files are deleted
 
-```javascript
-// Example: Secure route with validation
-import { body, validationResult } from "express-validator";
-import rateLimit from "express-rate-limit";
+## Deployment (Render)
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts
-  message: "Too many login attempts",
-});
+1. Create a **Web Service** on [Render](https://render.com)
+2. Connect your GitHub repo
+3. Set **Root Directory** to `backend`
+4. Set **Build Command** to `npm install`
+5. Set **Start Command** to `npm start`
+6. Add all env variables from `.env.example`
+7. Set `NODE_ENV=production` and `WEBSITE_URL` to your frontend URL
 
-export const validateLogin = [
-  body("email").isEmail().normalizeEmail(),
-  body("password").isLength({ min: 6 }),
-  loginLimiter,
-];
-```
+Currently deployed at: **https://real-estate-website-backend-zfu7.onrender.com**
 
----
+## Related
 
-## 🐳 Docker Deployment
-
-### Docker Setup
-
-```bash
-# Build image
-docker build -t buildestate-backend .
-
-# Run container
-docker run -p 4000:4000 --env-file .env.local buildestate-backend
-
-# Using Docker Compose
-docker-compose up --build
-```
-
-### Docker Configuration
-
-```dockerfile
-# Dockerfile
-FROM node:18-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY . .
-
-EXPOSE 4000
-
-USER node
-
-CMD ["npm", "start"]
-```
+- [Admin Panel README](../admin/README.md)
+- [Frontend README](../frontend/README.md)
+- [Root README](../README.md)
 
 ---
 
-## 🌐 Production Deployment
-
-### Render (Recommended)
-
-1. Connect your GitHub repository
-2. Set environment variables in Render dashboard
-3. Deploy automatically on push to main branch
-
-### Manual VPS Deployment
-
-```bash
-# On your server
-git clone https://github.com/AAYUSH412/Real-Estate-Website.git
-cd Real-Estate-Website/backend
-
-# Install dependencies
-npm ci --production
-
-# Set up environment
-cp .env.example .env
-# Edit .env with production values
-
-# Install PM2 for process management
-npm install -g pm2
-
-# Start application
-pm2 start server.js --name buildestate-api
-
-# Set up PM2 startup
-pm2 startup
-pm2 save
-```
-
-### Environment Variables for Production
-
-```bash
-NODE_ENV=production
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/buildestate
-JWT_SECRET=your-production-jwt-secret
-CORS_ORIGIN=https://yourdomain.com,https://admin.yourdomain.com
-# ... other production values
-```
-
----
-
-## 🔧 Configuration
-
-### MongoDB Connection
-
-```javascript
-// config/mongodb.js
-import mongoose from "mongoose";
-
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-    });
-
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error("Database connection error:", error);
-    process.exit(1);
-  }
-};
-
-export default connectDB;
-```
-
-### Email Configuration
-
-```javascript
-// config/nodemailer.js
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransporter({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-export default transporter;
-```
-
----
-
-## 🧪 Testing
-
-### Testing Setup (To be implemented)
-
-```bash
-# Install testing dependencies
-npm install --save-dev jest supertest mongodb-memory-server
-
-# Create test files
-mkdir tests
-touch tests/auth.test.js
-touch tests/properties.test.js
-```
-
-### Testing Example
-
-```javascript
-// tests/auth.test.js
-import request from "supertest";
-import app from "../server.js";
-
-describe("Authentication", () => {
-  test("POST /api/users/register", async () => {
-    const response = await request(app).post("/api/users/register").send({
-      name: "Test User",
-      email: "test@example.com",
-      password: "password123",
-    });
-
-    expect(response.status).toBe(201);
-    expect(response.body.success).toBe(true);
-  });
-});
-```
-
----
-
-## 🔍 Monitoring & Logging
-
-### Performance Monitoring
-
-```javascript
-// Add to server.js
-import compression from "compression";
-
-app.use(compression());
-
-// Request logging
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
-```
-
-### Health Check Endpoint
-
-```javascript
-// Add health check route
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-  });
-});
-```
-
----
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**Database connection failed:**
-
-```bash
-# Check MongoDB status
-brew services list | grep mongodb
-# Or for systemd
-systemctl status mongod
-
-# Check connection string
-echo $MONGODB_URI
-```
-
-**JWT authentication errors:**
-
-```bash
-# Verify JWT secret is set
-echo $JWT_SECRET
-
-# Check token format in requests
-# Authorization: Bearer <token>
-```
-
-**File upload issues:**
-
-```bash
-# Check ImageKit configuration
-# Verify file size limits
-# Check CORS settings for file uploads
-```
-
-### Performance Issues
-
-```bash
-# Monitor memory usage
-node --max-old-space-size=4096 server.js
-
-# Use PM2 for production monitoring
-pm2 monit
-pm2 logs buildestate-api
-```
-
-### Getting Help
-
-- Check [Backend Documentation](../BACKEND_DOCUMENTATION.md)
-- Review [API Testing Guide](../API_TESTING_GUIDE.md)
-- Submit [GitHub Issues](https://github.com/AAYUSH412/Real-Estate-Website/issues)
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-endpoint`
-3. Follow API design conventions
-4. Add proper error handling and validation
-5. Update documentation
-6. Submit a pull request
-
-### API Design Standards
-
-- **RESTful conventions** for endpoints
-- **Consistent response format**
-- **Proper HTTP status codes**
-- **Comprehensive error messages**
-- **Input validation and sanitization**
-- **Authentication where required**
-
----
-
-<div align="center">
-
-**Powering BuildEstate with robust API architecture**
-
-[⭐ Star](https://github.com/AAYUSH412/Real-Estate-Website) • [🐛 Issues](https://github.com/AAYUSH412/Real-Estate-Website/issues) • [📖 Docs](../README.md)
-
-</div> 
-- **Railway**
-- **Docker** containers
-
-## 📞 Support
-
-- Check the [troubleshooting guide](../BACKEND_DOCUMENTATION.md#-troubleshooting)
-- Open an issue on GitHub
-- Run `./setup.sh` for automated setup
-
----
-
-Built with ❤️ for BuildEstate
+Built with ❤️ by [Aayush Vaghela](https://aayush-vaghela.vercel.app/)
