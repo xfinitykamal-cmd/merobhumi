@@ -10,27 +10,27 @@ const submitNewsletter = async (req, res) => {
 
     // Validate email
     if (!email) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Email is required',
-        success: false 
+        success: false
       });
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Please provide a valid email address',
-        success: false 
+        success: false
       });
     }
 
     // Check if email already exists
     const existingSubscription = await News.findOne({ email: email.toLowerCase().trim() });
     if (existingSubscription) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Email already subscribed to newsletter',
-        success: false 
+        success: false
       });
     }
 
@@ -43,21 +43,21 @@ const submitNewsletter = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
-      subject: "Welcome to BuildEstate Newsletter! 🏠",
+      subject: "Welcome to Merobhumi Newsletter! 🏠",
       html: getNewsletterTemplate(email),
     };
 
     await transporter.sendMail(mailOptions);
 
-    res.json({ 
+    res.json({
       message: "Newsletter subscribed successfully",
-      success: true 
+      success: true
     });
   } catch (error) {
     console.error("Error saving newsletter data:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Server error",
-      success: false 
+      success: false
     });
   }
 };

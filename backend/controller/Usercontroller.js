@@ -56,7 +56,7 @@ const register = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
-      subject: "Welcome to BuildEstate - Your Account Has Been Created",
+      subject: "Welcome to Merobhumi - Your Account Has Been Created",
       html: getWelcomeTemplate(name)
     };
 
@@ -84,7 +84,7 @@ const forgotpassword = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
-      subject: "Password Reset - BuildEstate Security",
+      subject: "Password Reset - Merobhumi Security",
       html: getPasswordResetTemplate(resetUrl)
     };
 
@@ -123,7 +123,23 @@ const adminlogin = async (req, res) => {
     const { email, password } = req.body;
 
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      // Find the admin user in the database to get their actual ID
+      const adminUser = await userModel.findOne({ email, role: 'admin' });
+
+      if (!adminUser) {
+        return res.status(401).json({
+          message: "Admin account not fully provisioned in database. Please contact support.",
+          success: false
+        });
+      }
+
+      // Generate token with both email AND id to satisfy the protect middleware
+      const token = jwt.sign(
+        { id: adminUser._id, email: adminUser.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '30d' }
+      );
+
       return res.json({ token, success: true });
     } else {
       return res.status(400).json({ message: "Invalid credentials", success: false });
@@ -135,12 +151,12 @@ const adminlogin = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-    try {
-        return res.json({ message: "Logged out", success: true });
-    } catch (error) {
-        console.error(error);
-        return res.json({ message: "Server error", success: false });
-    }
+  try {
+    return res.json({ message: "Logged out", success: true });
+  } catch (error) {
+    console.error(error);
+    return res.json({ message: "Server error", success: false });
+  }
 };
 
 // get name and email

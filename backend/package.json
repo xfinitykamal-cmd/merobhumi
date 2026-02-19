@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "BuildEstate real estate platform backend API",
+  "description": "Merobhumi real estate platform backend API",
   "type": "module",
   "main": "server.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "render-build": "npm install",
     "test": "echo 'No tests specified' && exit 0"
   },
-  "author": "Aayush Vaghela",
+  "author": "Merobhumi Team",
   "license": "ISC",
   "dependencies": {
     "@azure-rest/ai-inference": "^1.0.0-beta.5",

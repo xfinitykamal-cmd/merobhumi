@@ -9,7 +9,7 @@ export default function getStatusPage() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildEstate API</title>
+  <title>Merobhumi API</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -60,8 +60,8 @@ export default function getStatusPage() {
     <!-- Header -->
     <div class="hdr">
       <div>
-        <h1>BuildEstate API</h1>
-        <p class="sub">Real Estate Platform Backend</p>
+        <h1>Merobhumi API</h1>
+        <p class="sub">Nepal Real Estate Platform Backend</p>
       </div>
       <div class="badge"><span class="dot"></span> Online</div>
     </div>
@@ -122,11 +122,11 @@ export default function getStatusPage() {
 
     <!-- Footer -->
     <div class="ftr">
-      <p>&copy; ${new Date().getFullYear()} BuildEstate &nbsp;|&nbsp;
+      <p>&copy; ${new Date().getFullYear()} Merobhumi &nbsp;|&nbsp;
         <a href="/health">Health</a> &nbsp;|&nbsp;
         <a href="/status">Status</a> &nbsp;|&nbsp;
-        <a href="https://buildestate.vercel.app" target="_blank">Website</a> &nbsp;|&nbsp;
-        <a href="https://github.com/AAYUSH412/Real-Estate-Website" target="_blank">GitHub</a>
+        <a href="https://merobhumi.com" target="_blank">Website</a> &nbsp;|&nbsp;
+        <a href="https://github.com/Merobhumi/Merobhumi-Platform" target="_blank">GitHub</a>
       </p>
       <p style="margin-top:8px;opacity:.6">Express.js &middot; MongoDB &middot; Last refresh: ${new Date().toLocaleString()}</p>
     </div>

@@ -99,8 +99,12 @@ const PropertyForm = () => {
         }
       });
 
+      const token = localStorage.getItem("token");
       const response = await axios.post(`${backendurl}/api/products/add`, formdata, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        },
       });
 
       if (response.data.success) {
@@ -132,7 +136,7 @@ const PropertyForm = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-[#1C1B1A] mb-1">Add New Property</h1>
-          <p className="text-[#5A5856]">Fill in the details to list a new property on BuildEstate</p>
+          <p className="text-[#5A5856]">Fill in the details to list a new property on Merobhumi</p>
         </motion.div>
 
         <motion.form
@@ -149,7 +153,7 @@ const PropertyForm = () => {
               <div>
                 <label htmlFor="title" className={labelClass}>Property Title</label>
                 <input type="text" id="title" name="title" required value={formData.title}
-                  onChange={handleInputChange} placeholder="e.g. Modern 3BHK Apartment in Bandra"
+                  onChange={handleInputChange} placeholder="e.g. Modern 3BHK Apartment in Kathmandu"
                   className={inputClass} />
               </div>
 
@@ -191,7 +195,7 @@ const PropertyForm = () => {
             <SectionHeader icon={MapPin} title="Location & Pricing" />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="price" className={labelClass}>Price (₹)</label>
+                <label htmlFor="price" className={labelClass}>Price (Rs.)</label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
                   <input type="number" id="price" name="price" required min="0"
@@ -205,7 +209,7 @@ const PropertyForm = () => {
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
                   <input type="text" id="location" name="location" required
                     value={formData.location} onChange={handleInputChange}
-                    placeholder="e.g. Bandra West, Mumbai" className={cn(inputClass, 'pl-10')} />
+                    placeholder="e.g. Baneshwor, Kathmandu" className={cn(inputClass, 'pl-10')} />
                 </div>
               </div>
               <div>
@@ -214,7 +218,7 @@ const PropertyForm = () => {
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
                   <input type="tel" id="phone" name="phone" required
                     value={formData.phone} onChange={handleInputChange}
-                    placeholder="+91 98765 43210" className={cn(inputClass, 'pl-10')} />
+                    placeholder="+977 98XXXXXXXX" className={cn(inputClass, 'pl-10')} />
                 </div>
               </div>
               <div>

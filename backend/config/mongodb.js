@@ -1,22 +1,21 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-dotenv.config();
-
 const connectdb = async () => {
   try {
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/merobhumi';
     // Check if MongoDB URI is provided
-    if (!process.env.MONGO_URI) {
+    if (!mongoUri) {
       throw new Error('MONGO_URI environment variable is not defined');
     }
 
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 10000, // Increased timeout for better stability
       socketTimeoutMS: 45000
     });
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    
+
     // Handle connection events
     mongoose.connection.on('error', (err) => {
       console.error('❌ MongoDB connection error:', err);
@@ -40,13 +39,14 @@ const connectdb = async () => {
     return conn;
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    
+
     // In production, you might want to retry connection instead of exiting
     if (process.env.NODE_ENV === 'production') {
       console.log('🔄 Retrying connection in 5 seconds...');
       setTimeout(() => connectdb(), 5000);
     } else {
-      process.exit(1);
+      console.error('⚠️  Proceeding without MongoDB for local development...');
+      // process.exit(1);
     }
   }
 };

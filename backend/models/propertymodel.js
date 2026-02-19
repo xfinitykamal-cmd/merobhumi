@@ -13,10 +13,10 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  image: { 
+  image: {
     type: [String],
     required: true
- },
+  },
   beds: {
     type: Number,
     required: true,
@@ -53,7 +53,34 @@ const propertySchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-});
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false, // Set to true after migration if necessary
+  },
+  coordinates: {
+    lat: { type: Number },
+    lng: { type: Number }
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected', 'expired'],
+    default: 'pending',
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['unpaid', 'paid'],
+    default: 'unpaid',
+  },
+}, { timestamps: true });
 
 const Property = mongoose.model("Property", propertySchema);
 

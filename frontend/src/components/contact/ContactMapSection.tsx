@@ -7,12 +7,12 @@ const ContactMapSection: React.FC = () => {
       <div className="max-w-[1280px] mx-auto px-8">
         <div className="relative aspect-[1280/400] rounded-2xl overflow-hidden border border-[#E6E0DA] bg-gray-100">
           {/* Map Image */}
-          <img 
+          <img
             src={mapLocationImage}
             alt="Office location map"
             className="w-full h-full object-cover"
           />
-          
+
           {/* Map Overlay Button */}
           <div className="absolute inset-0 flex items-center justify-center">
             <button className="bg-white shadow-2xl rounded-xl px-8 py-4 flex items-center gap-3 hover:shadow-3xl transition-shadow group">
@@ -21,7 +21,7 @@ const ContactMapSection: React.FC = () => {
               </span>
               <div className="text-left">
                 <p className="font-syne font-bold text-base text-[#221410] mb-0.5">
-                  BuildEstate Office
+                  Merobhumi Office
                 </p>
                 <p className="font-manrope font-extralight text-xs text-[#64748B]">
                   Click to view on Google Maps

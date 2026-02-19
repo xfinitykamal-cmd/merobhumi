@@ -21,20 +21,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('buildestate_token'));
+  const [token, setToken] = useState<string | null>(localStorage.getItem('merobhumi_token'));
   const [isLoading, setIsLoading] = useState(true);
 
   // On mount, check if token exists and is valid
   useEffect(() => {
-    const storedToken = localStorage.getItem('buildestate_token');
-    const storedUser = localStorage.getItem('buildestate_user');
+    const storedToken = localStorage.getItem('merobhumi_token');
+    const storedUser = localStorage.getItem('merobhumi_user');
     if (storedToken && storedUser) {
       try {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       } catch {
-        localStorage.removeItem('buildestate_token');
-        localStorage.removeItem('buildestate_user');
+        localStorage.removeItem('merobhumi_token');
+        localStorage.removeItem('merobhumi_user');
       }
     }
     setIsLoading(false);
@@ -43,8 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = useCallback(async (email: string, password: string) => {
     const { data } = await userAPI.login({ email, password });
     if (data.success && data.token) {
-      localStorage.setItem('buildestate_token', data.token);
-      localStorage.setItem('buildestate_user', JSON.stringify(data.user));
+      localStorage.setItem('merobhumi_token', data.token);
+      localStorage.setItem('merobhumi_user', JSON.stringify(data.user));
       setToken(data.token);
       setUser(data.user);
     } else {
@@ -55,8 +55,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = useCallback(async (fullName: string, email: string, phone: string, password: string) => {
     const { data } = await userAPI.register({ fullName, email, phone, password });
     if (data.success && data.token) {
-      localStorage.setItem('buildestate_token', data.token);
-      localStorage.setItem('buildestate_user', JSON.stringify(data.user));
+      localStorage.setItem('merobhumi_token', data.token);
+      localStorage.setItem('merobhumi_user', JSON.stringify(data.user));
       setToken(data.token);
       setUser(data.user);
     } else {
@@ -65,8 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('buildestate_token');
-    localStorage.removeItem('buildestate_user');
+    localStorage.removeItem('merobhumi_token');
+    localStorage.removeItem('merobhumi_user');
     setToken(null);
     setUser(null);
   }, []);

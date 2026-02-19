@@ -32,13 +32,15 @@ export const getAdminStats = async (req, res) => {
       activeListings,
       totalUsers,
       pendingAppointments,
+      pendingProperties,
       recentActivity,
       viewsData,
     ] = await Promise.all([
       Property.countDocuments(),
-      Property.countDocuments({ status: "active" }),
+      Property.countDocuments({ status: "approved" }),
       User.countDocuments(),
       Appointment.countDocuments({ status: "pending" }),
+      Property.countDocuments({ status: "pending" }), // Count pending properties
       getRecentActivity(),
       getViewsData(),
     ]);
@@ -50,6 +52,7 @@ export const getAdminStats = async (req, res) => {
         activeListings,
         totalUsers,
         pendingAppointments,
+        pendingProperties, // New stat
         recentActivity,
         viewsData,
       },
@@ -201,9 +204,8 @@ export const updateAppointmentStatus = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: appointment.userId.email,
-      subject: `Viewing Appointment ${
-        status.charAt(0).toUpperCase() + status.slice(1)
-      } - BuildEstate`,
+      subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)
+        } - Merobhumi`,
       html: getEmailTemplate(appointment, status),
     };
 
@@ -219,6 +221,38 @@ export const updateAppointmentStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error updating appointment",
+    });
+  }
+};
+
+export const updatePropertyStatus = async (req, res) => {
+  try {
+    const { propertyId, status } = req.body;
+
+    if (!['approved', 'rejected', 'pending'].includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status" });
+    }
+
+    const property = await Property.findByIdAndUpdate(
+      propertyId,
+      { status },
+      { new: true }
+    );
+
+    if (!property) {
+      return res.status(404).json({ success: false, message: "Property not found" });
+    }
+
+    res.json({
+      success: true,
+      message: `Property ${status} successfully`,
+      property,
+    });
+  } catch (error) {
+    console.error("Error updating property status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating property status",
     });
   }
 };

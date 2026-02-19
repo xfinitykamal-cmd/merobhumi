@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// BuildEstate Email Templates
+// Merobhumi Email Templates
 // Design: Warm terracotta (#D4755B), clean & professional
 // ═══════════════════════════════════════════════════════════
 
@@ -10,7 +10,7 @@ const BRAND = {
   border: '#E6E0DA',
   text: '#374151',
   muted: '#6B7280',
-  site: process.env.WEBSITE_URL || 'https://buildestate.vercel.app',
+  site: process.env.WEBSITE_URL || 'https://merobhumi.com',
   year: new Date().getFullYear(),
 };
 
@@ -21,7 +21,7 @@ const wrap = (title, body) => `
   <!-- Header -->
   <div style="background:${BRAND.dark};padding:32px 28px;text-align:center;">
     <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">${title}</h1>
-    <p style="margin:8px 0 0;font-size:13px;color:rgba(255,255,255,0.7);">BuildEstate</p>
+    <p style="margin:8px 0 0;font-size:13px;color:rgba(255,255,255,0.7);">Merobhumi</p>
   </div>
 
   <!-- Body -->
@@ -31,7 +31,7 @@ const wrap = (title, body) => `
 
   <!-- Footer -->
   <div style="border-top:1px solid ${BRAND.border};padding:20px 28px;text-align:center;font-size:12px;color:${BRAND.muted};">
-    <p style="margin:0;">&copy; ${BRAND.year} BuildEstate. All rights reserved.</p>
+    <p style="margin:0;">&copy; ${BRAND.year} Merobhumi. All rights reserved.</p>
     <p style="margin:8px 0 0;">
       <a href="${BRAND.site}" style="color:${BRAND.color};text-decoration:none;">Website</a>
       &nbsp;&middot;&nbsp;
@@ -55,7 +55,7 @@ const badge = (status) => {
   const colors = {
     confirmed: { bg: '#dcfce7', text: '#166534' },
     cancelled: { bg: '#fee2e2', text: '#991b1b' },
-    pending:   { bg: '#fef3c7', text: '#854d0e' },
+    pending: { bg: '#fef3c7', text: '#854d0e' },
   };
   const c = colors[status] || colors.pending;
   return `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:13px;font-weight:600;background:${c.bg};color:${c.text};">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
@@ -100,10 +100,10 @@ export const getEmailTemplate = (appointment, status) => wrap(
         <strong>Next steps:</strong> Please arrive 10 minutes early and bring a valid ID.
       </div>`
     : status === 'cancelled'
-    ? `<div style="background:#fef2f2;border-left:3px solid #dc2626;padding:14px 16px;border-radius:6px;font-size:14px;color:#991b1b;margin-bottom:16px;">
+      ? `<div style="background:#fef2f2;border-left:3px solid #dc2626;padding:14px 16px;border-radius:6px;font-size:14px;color:#991b1b;margin-bottom:16px;">
         This appointment has been cancelled. You can schedule another viewing at any time.
       </div>`
-    : ''
+      : ''
   }
 
   ${btn(BRAND.site + '/properties', 'Browse Properties')}`
@@ -131,7 +131,7 @@ export const getNewsletterTemplate = (email) => wrap(
 // ─── 4. Welcome (Registration) ──────────────────────────
 
 export const getWelcomeTemplate = (name) => wrap(
-  'Welcome to BuildEstate',
+  'Welcome to Merobhumi',
   `<p style="margin:0 0 20px;font-size:15px;">Hello <strong style="color:${BRAND.color};">${name}</strong>,</p>
   <p style="margin:0 0 24px;font-size:15px;">Your account has been created successfully. Here's what you can do:</p>
 
@@ -153,7 +153,7 @@ export const getWelcomeTemplate = (name) => wrap(
 
 export const getPasswordResetTemplate = (resetUrl) => wrap(
   'Reset Your Password',
-  `<p style="margin:0 0 20px;font-size:15px;">We received a request to reset your BuildEstate account password.</p>
+  `<p style="margin:0 0 20px;font-size:15px;">We received a request to reset your Merobhumi account password.</p>
 
   <p style="margin:0 0 8px;font-size:14px;color:${BRAND.muted};">Click the button below to set a new password. This link expires in <strong>10 minutes</strong>.</p>
 

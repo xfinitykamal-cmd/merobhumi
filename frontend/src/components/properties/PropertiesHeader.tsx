@@ -3,23 +3,23 @@ import React, { useState } from 'react';
 interface PropertiesHeaderProps {
   totalProperties?: number;
   onSortChange?: (sort: string) => void;
-  onViewChange?: (view: 'grid' | 'list') => void;
+  onViewChange?: (view: 'grid' | 'list' | 'map') => void;
 }
 
-const PropertiesHeader: React.FC<PropertiesHeaderProps> = ({ 
+const PropertiesHeader: React.FC<PropertiesHeaderProps> = ({
   totalProperties = 107,
   onSortChange,
-  onViewChange 
+  onViewChange
 }) => {
   const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
     onSortChange?.(value);
   };
 
-  const handleViewChange = (mode: 'grid' | 'list') => {
+  const handleViewChange = (mode: 'grid' | 'list' | 'map') => {
     setViewMode(mode);
     onViewChange?.(mode);
   };
@@ -66,25 +66,33 @@ const PropertiesHeader: React.FC<PropertiesHeaderProps> = ({
             <div className="flex items-center gap-1 bg-[#F8F6F6] rounded-lg p-1">
               <button
                 onClick={() => handleViewChange('grid')}
-                className={`p-2 rounded transition-all ${
-                  viewMode === 'grid'
-                    ? 'bg-white text-[#D4755B] shadow-sm'
-                    : 'text-[#6B7280] hover:text-[#D4755B]'
-                }`}
+                className={`p-2 rounded transition-all ${viewMode === 'grid'
+                  ? 'bg-white text-[#D4755B] shadow-sm'
+                  : 'text-[#6B7280] hover:text-[#D4755B]'
+                  }`}
                 title="Grid View"
               >
                 <span className="material-icons text-xl">grid_view</span>
               </button>
               <button
                 onClick={() => handleViewChange('list')}
-                className={`p-2 rounded transition-all ${
-                  viewMode === 'list'
+                className={`p-2 rounded transition-all ${viewMode === 'list'
                     ? 'bg-white text-[#D4755B] shadow-sm'
                     : 'text-[#6B7280] hover:text-[#D4755B]'
-                }`}
+                  }`}
                 title="List View"
               >
                 <span className="material-icons text-xl">view_list</span>
+              </button>
+              <button
+                onClick={() => handleViewChange('map')}
+                className={`p-2 rounded transition-all ${viewMode === 'map'
+                    ? 'bg-white text-[#D4755B] shadow-sm'
+                    : 'text-[#6B7280] hover:text-[#D4755B]'
+                  }`}
+                title="Map View"
+              >
+                <span className="material-icons text-xl">map</span>
               </button>
             </div>
           </div>

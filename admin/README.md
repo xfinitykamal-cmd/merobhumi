@@ -1,9 +1,9 @@
-# BuildEstate — Admin Panel
+# Merobhumi — Admin Panel
 
-Administrative dashboard for managing the BuildEstate real estate platform. Built with React, Vite, and Tailwind CSS.
+Administrative dashboard for managing the Merobhumi real estate platform. Built with React, Vite, and Tailwind CSS.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Dashboard-EA4335?style=for-the-badge&logo=render)](https://real-estate-website-admin.onrender.com/)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Aayush_Vaghela-000000?style=for-the-badge)](https://aayush-vaghela.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Dashboard-EA4335?style=for-the-badge&logo=render)](https://admin.merobhumi.com)
+[![Support](https://img.shields.io/badge/Support-Merobhumi_Team-000000?style=for-the-badge)](https://merobhumi.com/contact)
 
 ## Key Features
 
@@ -89,7 +89,7 @@ admin/src/
 5. Publish Directory: `dist`
 6. Add env var: `VITE_BACKEND_URL` = your backend URL
 
-Deployed at: **https://real-estate-website-admin.onrender.com**
+Deployed at: **https://admin.merobhumi.com**
 
 ## Related
 
@@ -99,4 +99,4 @@ Deployed at: **https://real-estate-website-admin.onrender.com**
 
 ---
 
-Created by [Aayush Vaghela](https://aayush-vaghela.vercel.app/)
+Created by [Merobhumi Team](https://merobhumi.com)

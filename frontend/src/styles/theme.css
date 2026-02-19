@@ -1,22 +1,23 @@
 @custom-variant dark (&:is(.dark *));
 
-/* BuildEstate Luxury Design System */
+/* Merobhumi Luxury Design System */
 :root {
   /* Luxury Color Palette */
   --canvas-cream: #FAF8F4;
   --pearl-white: #FFFFFF;
   --terracotta-clay: #D4755B;
-  --terracotta-primary: #EC4613; /* Figma uses this brighter version */
+  --terracotta-primary: #EC4613;
+  /* Figma uses this brighter version */
   --charcoal-ink: #1C1B1A;
   --slate-gray: #5A5856;
   --warm-linen: #F5F1E8;
   --warm-sand: #E6D5C3;
-  
+
   /* Extended palette from Figma */
   --warm-bg-1: #F8F6F6;
   --warm-bg-2: #F9F7F2;
   --warm-bg-3: #F0EBE5;
-  
+
   /* Neutral colors from Figma */
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
@@ -28,7 +29,7 @@
   --gray-700: #374151;
   --gray-800: #1f2937;
   --gray-900: #111827;
-  
+
   /* Font families */
   --font-fraunces: 'Fraunces', serif;
   --font-syne: 'Syne', sans-serif;
@@ -36,7 +37,7 @@
   --font-space-mono: 'Space Mono', monospace;
   --font-manrope: 'Manrope', sans-serif;
   --font-material-icons: 'Material Icons', sans-serif;
-  
+
   /* Design tokens for Tailwind */
   --font-size: 16px;
   --background: var(--canvas-cream);
@@ -173,7 +174,7 @@
   }
 
   /**
-  * BuildEstate Typography System
+  * Merobhumi Typography System
   * Headings use Fraunces (elegant serif)
   * Subheadings use Syne (geometric sans)
   * Body text uses Red Hat Display (humanist sans)
@@ -230,34 +231,35 @@
     line-height: 1.5;
   }
 
-  input, textarea {
+  input,
+  textarea {
     font-family: var(--font-red-hat);
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
-  
+
   /* Utility classes for font families */
   .font-fraunces {
     font-family: var(--font-fraunces);
   }
-  
+
   .font-syne {
     font-family: var(--font-syne);
   }
-  
+
   .font-red-hat {
     font-family: var(--font-red-hat);
   }
-  
+
   .font-space-mono {
     font-family: var(--font-space-mono);
   }
-  
+
   .font-manrope {
     font-family: var(--font-manrope);
   }
-  
+
   .font-material-icons {
     font-family: var(--font-material-icons);
   }

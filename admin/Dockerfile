@@ -1,20 +1,20 @@
-# Base image
-FROM node:18-alpine
+# Admin Dockerfile
+FROM node:20-alpine as builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy project files
+# Copy source and build
 COPY . .
-
-# Build the app
 RUN npm run build
 
-# Start command
-CMD ["npm", "run", "dev"]
+# Setup serve env
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port and run nginx
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

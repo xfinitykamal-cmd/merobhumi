@@ -14,11 +14,16 @@ Rules:
 
 class AIService {
   constructor() {
-    this.apiKey = config.githubApiKey;
-    this.client = ModelClient(
-      "https://models.inference.ai.azure.com",
-      new AzureKeyCredential(this.apiKey)
-    );
+    this.apiKey = config.githubApiKey || 'dummy_key';
+    try {
+      this.client = ModelClient(
+        "https://models.inference.ai.azure.com",
+        new AzureKeyCredential(this.apiKey)
+      );
+    } catch (error) {
+      console.warn("[AI] Service initialization failed:", error.message);
+      this.client = null;
+    }
   }
 
   /**

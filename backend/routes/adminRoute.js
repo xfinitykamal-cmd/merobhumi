@@ -1,14 +1,20 @@
 import express from 'express';
-import { 
+import {
   getAdminStats,
   getAllAppointments,
-  updateAppointmentStatus 
+  updateAppointmentStatus,
+  updatePropertyStatus
 } from '../controller/adminController.js';
+import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
 
+// All admin routes are protected
+router.use(protect, adminOnly);
+
 router.get('/stats', getAdminStats);
-router.get('/appointments',getAllAppointments);
-router.put('/appointments/status',updateAppointmentStatus);
+router.get('/appointments', getAllAppointments);
+router.put('/appointments/status', updateAppointmentStatus);
+router.put('/properties/status', updatePropertyStatus);
 
 export default router;

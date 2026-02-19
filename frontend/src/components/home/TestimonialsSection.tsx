@@ -22,13 +22,13 @@ const TestimonialsSection: React.FC = () => {
               ))}
             </div>
             <p className="font-manrope text-base text-[#4b5563] leading-relaxed mb-6">
-              "BuildEstate's AI matched us with our dream home in just 2 weeks. The process was seamless and personalized."
+              "Merobhumi's AI matched us with our dream home in just 2 weeks. The process was seamless and personalized."
             </p>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#E5E7EB] rounded-full" />
               <div>
-                <div className="font-syne font-bold text-sm text-[#111827]">Sarah Johnson</div>
-                <div className="font-manrope text-xs text-[#6b7280]">Los Angeles, CA</div>
+                <div className="font-syne font-bold text-sm text-[#111827]">Anish Shrestha</div>
+                <div className="font-manrope text-xs text-[#6b7280]">Kathmandu, Nepal</div>
               </div>
             </div>
           </div>
@@ -46,8 +46,8 @@ const TestimonialsSection: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#E5E7EB] rounded-full" />
               <div>
-                <div className="font-syne font-bold text-sm text-[#111827]">Michael Chen</div>
-                <div className="font-manrope text-xs text-[#6b7280]">San Francisco, CA</div>
+                <div className="font-syne font-bold text-sm text-[#111827]">Srijana Thapa</div>
+                <div className="font-manrope text-xs text-[#6b7280]">Pokhara, Nepal</div>
               </div>
             </div>
           </div>
@@ -65,8 +65,8 @@ const TestimonialsSection: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#E5E7EB] rounded-full" />
               <div>
-                <div className="font-syne font-bold text-sm text-[#111827]">Emily Rodriguez</div>
-                <div className="font-manrope text-xs text-[#6b7280]">Austin, TX</div>
+                <div className="font-syne font-bold text-sm text-[#111827]">Ramesh Karki</div>
+                <div className="font-manrope text-xs text-[#6b7280]">Lalitpur, Nepal</div>
               </div>
             </div>
           </div>

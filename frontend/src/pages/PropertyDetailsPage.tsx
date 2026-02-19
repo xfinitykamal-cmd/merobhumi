@@ -36,13 +36,14 @@ const PropertyDetailsPage: React.FC = () => {
   const [property, setProperty] = useState<PropertyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [similarProperties, setSimilarProperties] = useState<PropertyData[]>([]);
 
   // Dynamic SEO based on loaded property
   useSEO({
     title: property ? `${property.title} - ${property.location}` : 'Property Details',
     description: property
       ? `${property.title} in ${property.location}. ${property.beds} beds, ${property.baths} baths, ${property.sqft} sqft. ${property.type}.`
-      : 'View property details on BuildEstate.',
+      : 'View property details on Merobhumi.',
   });
 
   useEffect(() => {
@@ -67,6 +68,25 @@ const PropertyDetailsPage: React.FC = () => {
 
     fetchProperty();
   }, [id]);
+
+  useEffect(() => {
+    const fetchSimilar = async () => {
+      if (!property) return;
+      try {
+        const { data } = await propertiesAPI.getAll();
+        if (data.success && data.property) {
+          // Filter by same type, exclude current
+          const similar = data.property.filter((p: any) =>
+            p.type === property.type && p._id !== property._id
+          ).slice(0, 4);
+          setSimilarProperties(similar);
+        }
+      } catch (err) {
+        console.error("Failed to fetch similar properties:", err);
+      }
+    };
+    fetchSimilar();
+  }, [property]);
 
   // Format price for display
   const formatPrice = (price: number): string => {
@@ -180,10 +200,29 @@ const PropertyDetailsPage: React.FC = () => {
       {/* Main Content Area */}
       <div className="bg-[#F2EFE9] py-12">
         <div className="max-w-[1280px] mx-auto px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left Column - Main Content */}
-            <div className="lg:col-span-2">
-              <div className="bg-white border border-[#E6E0DA] rounded-2xl p-8 shadow-sm">
+            <div className="flex-1 w-full lg:w-2/3">
+              <div className="bg-white border border-[#E6E0DA] rounded-3xl p-8 shadow-sm">
+
+                {/* Price Insight Bar (Magicbricks Style) */}
+                <div className="flex flex-wrap items-center gap-6 mb-8 p-4 bg-[#F9FAFB] rounded-2xl border border-[#F1F5F9]">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">Avg. Price</span>
+                    <span className="font-space-mono font-bold text-lg text-[#111827]">
+                      Rs. {(property.price / property.sqft).toFixed(0).toLocaleString()}/sqft
+                    </span>
+                  </div>
+                  <div className="w-[1px] h-10 bg-[#E5E7EB] hidden md:block" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">Property Status</span>
+                    <span className="font-manrope font-bold text-sm text-[#10B981] flex items-center gap-1">
+                      <span className="material-icons text-sm">check_circle</span>
+                      Ready to Move
+                    </span>
+                  </div>
+                </div>
+
                 {/* About Section */}
                 <PropertyAbout description={property.description} />
 
@@ -201,15 +240,58 @@ const PropertyDetailsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column - Schedule Viewing Sidebar */}
-            <div className="lg:col-span-1">
+            {/* Right Column - Schedule Viewing Sidebar (Sticky) */}
+            <div className="w-full lg:w-1/3 lg:sticky lg:top-24">
               <ScheduleViewingCard
                 property={{ name: property.title, id: property._id }}
               />
+
+              {/* Trust Box */}
+              <div className="mt-6 bg-[#D4755B]/10 border border-[#D4755B]/20 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="material-icons text-[#D4755B]">verified_user</span>
+                  <span className="font-syne font-bold text-[#111827]">Verified Agent</span>
+                </div>
+                <p className="font-manrope text-xs text-[#4b5563] leading-relaxed">
+                  This property has been verified by our team. All documents and details are authentic.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Similar Properties Section */}
+      {similarProperties.length > 0 && (
+        <div className="bg-white py-20 border-t border-[#F1F5F9]">
+          <div className="max-w-[1280px] mx-auto px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className="font-syne font-bold text-3xl text-[#111827] mb-2 text-left">Similar Properties</h2>
+                <p className="font-manrope text-[#64748B]">You might also be interested in these listings</p>
+              </div>
+              <Link to="/properties" className="text-[#D4755B] font-manrope font-bold hover:underline">View All</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {similarProperties.map((p) => (
+                <div key={p._id} className="bg-white border border-[#E6E0DA] rounded-2xl overflow-hidden hover:shadow-lg transition-all group">
+                  <Link to={`/property/${p._id}`}>
+                    <div className="relative h-48 overflow-hidden">
+                      <img src={p.image?.[0]} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold uppercase">{p.type}</div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-manrope font-bold text-[#111827] truncate mb-1">{p.title}</h4>
+                      <p className="text-[#64748B] text-xs truncate mb-3">{p.location}</p>
+                      <div className="text-[#D4755B] font-space-mono font-bold">Rs. {p.price.toLocaleString('en-IN')}</div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Simple Footer */}
       <SimpleFooter />

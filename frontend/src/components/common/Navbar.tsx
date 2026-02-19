@@ -32,7 +32,6 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/properties', label: 'Properties' },
-    { path: '/ai-hub', label: 'AI Property Hub' },
     { path: '/about', label: 'About' },
     { path: '/contact', label: 'Contact' },
   ];
@@ -48,8 +47,8 @@ const Navbar: React.FC = () => {
       <div className="max-w-[1280px] mx-auto px-8 flex items-center justify-between h-20">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3" onClick={closeMobileMenu}>
-          <img src="/logo.png" alt="BuildEstate" className="h-9 w-auto" />
-          <span className="font-fraunces text-2xl font-bold text-[#111827]">BuildEstate</span>
+          <img src="/logo.png" alt="Merobhumi" className="h-9 w-auto" />
+          <span className="font-fraunces text-2xl font-bold text-[#111827]">Merobhumi</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -58,11 +57,10 @@ const Navbar: React.FC = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`font-manrope transition-colors ${
-                isActive(link.path)
-                  ? 'text-[#D4755B] font-semibold'
-                  : 'text-[#374151] hover:text-[#D4755B]'
-              }`}
+              className={`font-manrope transition-colors ${isActive(link.path)
+                ? 'text-[#D4755B] font-semibold'
+                : 'text-[#374151] hover:text-[#D4755B]'
+                }`}
             >
               {link.label}
             </Link>
@@ -71,11 +69,18 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            to="/post-property"
+            className="font-manrope font-bold text-[#D4755B] px-4 py-2 border border-[#D4755B] rounded-xl hover:bg-[#D4755B] hover:text-white transition-all flex items-center gap-2"
+          >
+            <span>Post Property</span>
+            <span className="bg-[#D4755B]/10 text-[10px] px-1.5 py-0.5 rounded uppercase hover:bg-white/20 transition-colors">Free</span>
+          </Link>
           {isAuthenticated && user ? (
             <>
-              <span className="font-manrope text-sm text-[#374151]">
+              <Link to="/profile" className="font-manrope text-sm text-[#374151] hover:text-[#D4755B] transition-colors">
                 Hi, <span className="font-semibold">{user.name}</span>
-              </span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-[#D4755B] text-white font-manrope font-bold px-6 py-2 rounded-lg hover:bg-[#B86851] transition-all hover:shadow-lg"
@@ -102,11 +107,11 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button 
+        <button
           className="md:hidden p-2 text-[#374151] hover:text-[#D4755B] transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          <span className="font-material-icons text-2xl">
+          <span className="material-icons text-2xl">
             {isMobileMenuOpen ? 'close' : 'menu'}
           </span>
         </button>
@@ -119,11 +124,10 @@ const Navbar: React.FC = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`font-manrope text-lg py-2 transition-colors ${
-                isActive(link.path)
-                  ? 'text-[#D4755B] font-semibold'
-                  : 'text-[#374151] hover:text-[#D4755B]'
-              }`}
+              className={`font-manrope text-lg py-2 transition-colors ${isActive(link.path)
+                ? 'text-[#D4755B] font-semibold'
+                : 'text-[#374151] hover:text-[#D4755B]'
+                }`}
               onClick={closeMobileMenu}
             >
               {link.label}

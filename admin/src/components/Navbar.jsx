@@ -14,6 +14,7 @@ import {
   User,
   ChevronDown,
   Settings,
+  ClipboardCheck
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -52,6 +53,8 @@ const Navbar = () => {
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/list', label: 'Properties', icon: List },
     { path: '/add', label: 'Add Property', icon: PlusSquare },
+    { path: '/approvals', label: 'Approvals', icon: ClipboardCheck },
+    { path: '/plans', label: 'Plans', icon: List },
     { path: '/appointments', label: 'Appointments', icon: Calendar },
   ];
 
@@ -81,7 +84,7 @@ const Navbar = () => {
             </motion.div>
             <div>
               <span className="text-lg font-bold text-[#FAF8F4] tracking-tight">
-                BuildEstate
+                Merobhumi
               </span>
               <div className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-widest leading-none">
                 Admin Panel

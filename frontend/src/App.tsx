@@ -11,13 +11,14 @@ import StructuredData from './components/common/StructuredData';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const PropertiesPage = lazy(() => import('./pages/PropertiesPage'));
 const PropertyDetailsPage = lazy(() => import('./pages/PropertyDetailsPage'));
-const AIPropertyHubPage = lazy(() => import('./pages/AIPropertyHubPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const SignInPage = lazy(() => import('./pages/SignInPage'));
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+const PostPropertyPage = lazy(() => import('./pages/PostPropertyPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 function NotFoundPage() {
   return (
@@ -41,7 +42,7 @@ function PageLoader() {
 
 function AnimatedRoutes() {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <StructuredData type="website" />
@@ -50,13 +51,14 @@ function AnimatedRoutes() {
         <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
         <Route path="/properties" element={<PageTransition><PropertiesPage /></PageTransition>} />
         <Route path="/property/:id" element={<PageTransition><PropertyDetailsPage /></PageTransition>} />
-        <Route path="/ai-hub" element={<PageTransition><AIPropertyHubPage /></PageTransition>} />
         <Route path="/about" element={<PageTransition><AboutUsPage /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
         <Route path="/signin" element={<PageTransition><SignInPage /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><SignUpPage /></PageTransition>} />
         <Route path="/forgot-password" element={<PageTransition><ForgotPasswordPage /></PageTransition>} />
         <Route path="/reset/:token" element={<PageTransition><ResetPasswordPage /></PageTransition>} />
+        <Route path="/post-property" element={<PageTransition><PostPropertyPage /></PageTransition>} />
+        <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>

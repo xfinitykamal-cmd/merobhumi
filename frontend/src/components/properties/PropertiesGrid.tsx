@@ -5,7 +5,7 @@ import type { Property } from '../../pages/PropertiesPage';
 
 interface PropertiesGridProps {
   properties: Property[];
-  viewMode?: 'grid' | 'list';
+  viewMode?: 'grid' | 'list' | 'map';
 }
 
 const fallbackImages = [
@@ -48,7 +48,7 @@ const PropertiesGrid: React.FC<PropertiesGridProps> = ({ properties, viewMode = 
   return (
     <div className="flex-1 p-8">
       {/* Properties Grid */}
-      <motion.div 
+      <motion.div
         variants={container}
         initial="hidden"
         whileInView="show"
@@ -72,10 +72,12 @@ const PropertiesGrid: React.FC<PropertiesGridProps> = ({ properties, viewMode = 
               sqft={property.sqft}
               badge={
                 property.availability === 'sold' ? 'SOLD' :
-                property.availability === 'rent' ? 'FOR RENT' :
-                property.availability === 'sale' ? 'FOR SALE' :
-                property.availability?.toUpperCase()
+                  property.availability === 'rent' ? 'FOR RENT' :
+                    property.availability === 'sale' ? 'FOR SALE' :
+                      property.availability?.toUpperCase()
               }
+              isVerified={property.isVerified}
+              isFeatured={property.isFeatured}
               tags={property.type ? [property.type] : []}
             />
           </motion.div>

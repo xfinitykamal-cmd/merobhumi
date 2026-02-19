@@ -78,3 +78,13 @@ out/
 !package-lock.json
 !yarn.lock
 !backend/uploads/.gitkeep
+
+node_modules/
+.env
+dist/
+build/
+backend/uploads/
+backups/
+.agent/
+frontend/src/images/Newsletter*
+

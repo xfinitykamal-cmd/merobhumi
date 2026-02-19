@@ -116,7 +116,13 @@ const Update = () => {
         if (typeof image !== 'string') formdata.append(`image${i + 1}`, image);
       });
 
-      const response = await axios.post(`${backendurl}/api/products/update`, formdata);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${backendurl}/api/products/update`, formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (response.data.success) {
         toast.success('Property updated successfully!');
         navigate('/list');

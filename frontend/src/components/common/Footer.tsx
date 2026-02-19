@@ -19,49 +19,49 @@ const Footer: React.FC = () => {
           {/* Brand Column */}
           <div>
             <Link to="/" className="flex items-center gap-3 mb-6">
-              <img src="/logo.png" alt="BuildEstate" className="h-10 w-auto brightness-0 invert" />
-              <span className="font-fraunces text-2xl font-bold">BuildEstate</span>
+              <img src="/logo.png" alt="Merobhumi" className="h-10 w-auto brightness-0 invert" />
+              <span className="font-fraunces text-2xl font-bold">Merobhumi</span>
             </Link>
             <p className="font-manrope font-extralight text-[#9ca3af] text-sm leading-relaxed mb-6">
-              AI-powered luxury real estate platform connecting you with your dream home through intelligent matching and personalized recommendations.
+              Nepal's premium real estate marketplace connecting you with verified properties across all provinces through advanced location search.
             </p>
             {/* Social Links */}
             <div className="flex gap-3">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
+              <a
+                href="https://facebook.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Facebook className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
+              <a
+                href="https://twitter.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Twitter className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
               </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
+              <a
+                href="https://instagram.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Instagram className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
               </a>
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
+              <a
+                href="https://linkedin.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Linkedin className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
               </a>
-              <a 
-                href="https://youtube.com" 
-                target="_blank" 
+              <a
+                href="https://youtube.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
@@ -113,24 +113,23 @@ const Footer: React.FC = () => {
             <ul className="space-y-4">
               <li>
                 <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 font-manrope font-extralight text-[#9ca3af] text-sm hover:text-white transition-colors group">
-                  <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#D4755B]" />
+                  <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#FF6B00]" />
                   <span className="leading-relaxed">
-                    502, Devpath Building,<br />
-                    Near Torrent Lab,<br />
-                    Ashram Road, Ahmedabad
+                    Kathmandu, Nepal<br />
+                    Province 3
                   </span>
                 </a>
               </li>
               <li>
-                <a href="tel:+919876543210" className="flex items-center gap-3 font-manrope font-extralight text-[#9ca3af] text-sm hover:text-white transition-colors">
-                  <Phone className="w-5 h-5 flex-shrink-0 text-[#D4755B]" />
-                  <span>+91 98765 43210</span>
+                <a href="tel:+977010000000" className="flex items-center gap-3 font-manrope font-extralight text-[#9ca3af] text-sm hover:text-white transition-colors">
+                  <Phone className="w-5 h-5 flex-shrink-0 text-[#FF6B00]" />
+                  <span>+977 01-0000000</span>
                 </a>
               </li>
               <li>
-                <a href="mailto:hello@buildestate.com" className="flex items-center gap-3 font-manrope font-extralight text-[#9ca3af] text-sm hover:text-white transition-colors">
-                  <Mail className="w-5 h-5 flex-shrink-0 text-[#D4755B]" />
-                  <span>hello@buildestate.com</span>
+                <a href="mailto:contact@merobhumi.com" className="flex items-center gap-3 font-manrope font-extralight text-[#9ca3af] text-sm hover:text-white transition-colors">
+                  <Mail className="w-5 h-5 flex-shrink-0 text-[#FF6B00]" />
+                  <span>contact@merobhumi.com</span>
                 </a>
               </li>
             </ul>
@@ -151,7 +150,7 @@ const Footer: React.FC = () => {
                 className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-3 font-manrope font-extralight text-sm text-white placeholder:text-[#6b7280] focus:outline-none focus:border-[#D4755B] transition-colors"
                 required
               />
-              <button 
+              <button
                 type="submit"
                 className="w-full bg-[#D4755B] hover:bg-[#C05621] text-white font-manrope font-bold text-sm px-4 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl"
               >
@@ -168,7 +167,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-[rgba(255,255,255,0.1)] pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="font-manrope font-extralight text-[#6b7280] text-sm text-center md:text-left">
-              © 2026 BuildEstate. All rights reserved. Powered by AI.
+              © 2026 Merobhumi. All rights reserved. Managed by Merobhumi Team.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               <a href="#" className="font-manrope font-extralight text-[#6b7280] text-sm hover:text-white transition-colors">

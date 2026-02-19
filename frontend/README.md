@@ -1,9 +1,9 @@
-# BuildEstate — Frontend
+# Merobhumi — Frontend
 
-User-facing website for the BuildEstate platform. Built with React, TypeScript, Vite, and Tailwind CSS.
+User-facing website for the Merobhumi platform. Built with React, TypeScript, Vite, and Tailwind CSS.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-buildestate.vercel.app-2ea44f?style=for-the-badge&logo=vercel)](https://buildestate.vercel.app)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Aayush_Vaghela-000000?style=for-the-badge)](https://aayush-vaghela.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-merobhumi.com-FF6B00?style=for-the-badge&logo=vercel)](https://merobhumi.com)
+[![Support](https://img.shields.io/badge/Support-Merobhumi_Team-000000?style=for-the-badge)](https://merobhumi.com/contact)
 
 ## Features
 
@@ -11,7 +11,7 @@ User-facing website for the BuildEstate platform. Built with React, TypeScript, 
 - **Property Details** — Full gallery, amenities list, and appointment booking
 - **User Authentication** — Sign up, sign in, forgot/reset password
 - **Appointment Booking** — Schedule property viewings as guest or logged-in user
-- **AI Property Hub** — GPT-4.1 powered search and market analysis (local only — see below)
+- **AI Property Hub** — AI powered search and market analysis (local only — see below)
 - **SEO Optimized** — Structured data, sitemap, robots.txt, meta tags per page
 - **Page Transitions** — Smooth animations via Framer Motion
 
@@ -102,7 +102,7 @@ frontend/src/
 5. Do **not** set `VITE_ENABLE_AI_HUB` in Vercel (leave it unset)
 6. Deploy
 
-Currently deployed at: **https://buildestate.vercel.app**
+Currently deployed at: **https://merobhumi.com**
 
 ## Related
 
@@ -112,4 +112,4 @@ Currently deployed at: **https://buildestate.vercel.app**
 
 ---
 
-Created by [Aayush Vaghela](https://aayush-vaghela.vercel.app/)
+Created by [Merobhumi Team](https://merobhumi.com)

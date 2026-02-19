@@ -18,6 +18,8 @@ import PropertyListings from "./pages/List";
 import Add from "./pages/Add";
 import Update from "./pages/Update";
 import Appointments from "./pages/Appointments";
+import Approvals from "./pages/Approvals";
+import PlanManagement from "./pages/PlanManagement";
 
 // Page transition variants
 const pageVariants = {
@@ -56,6 +58,8 @@ const AppLayout = () => {
               <Route path="/add" element={<Add />} />
               <Route path="/update/:id" element={<Update />} />
               <Route path="/appointments" element={<Appointments />} />
+              <Route path="/approvals" element={<Approvals />} />
+              <Route path="/plans" element={<PlanManagement />} />
             </Route>
 
             {/* 404 Route */}

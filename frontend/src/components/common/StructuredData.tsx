@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-const SITE_URL = 'https://buildestate.vercel.app';
+const SITE_URL = 'https://merobhumi.com';
 
 interface StructuredDataProps {
   type: 'website' | 'organization' | 'property' | 'aiHub';
@@ -27,9 +27,9 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     website: {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'BuildEstate',
+      name: 'Merobhumi',
       url: SITE_URL,
-      description: 'AI-powered luxury real estate platform for finding your perfect property in India.',
+      description: 'Nepal\'s premium real estate marketplace with AI-driven property insights.',
       potentialAction: {
         '@type': 'SearchAction',
         target: `${SITE_URL}/properties?q={search_term_string}`,
@@ -39,17 +39,17 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     organization: {
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      name: 'BuildEstate',
+      name: 'Merobhumi',
       url: SITE_URL,
       logo: `${SITE_URL}/logo.png`,
       sameAs: [
-        'https://github.com/AAYUSH412/Real-Estate-Website',
-        'https://linkedin.com/in/AAYUSH412',
+        'https://github.com/merobhumi',
+        'https://linkedin.com/company/merobhumi',
       ],
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'customer service',
-        availableLanguage: ['English', 'Hindi'],
+        availableLanguage: ['English', 'Nepali'],
       },
     },
     property: {
@@ -64,9 +64,9 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
         '@type': 'PostalAddress',
         addressLocality: data?.location || 'City',
         addressRegion: data?.region || 'Region',
-        addressCountry: 'IN',
+        addressCountry: 'NP',
       },
-      ...(data?.price && { price: `₹${data.price}`, priceCurrency: 'INR' }),
+      ...(data?.price && { price: `रू${data.price}`, priceCurrency: 'NPR' }),
       ...(data?.sqft && {
         floorSize: {
           '@type': 'QuantitativeValue',
@@ -80,14 +80,14 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     aiHub: {
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
-      name: 'AI Property Hub - BuildEstate',
+      name: 'AI Property Hub - Merobhumi',
       applicationCategory: 'RealEstateApplication',
-      description: 'AI-powered real estate analytics, property search, and investment insights.',
+      description: 'AI-powered real estate analytics, property search, and investment insights in Nepal.',
       url: `${SITE_URL}/ai-hub`,
       offers: {
         '@type': 'Offer',
         price: '0',
-        priceCurrency: 'INR',
+        priceCurrency: 'NPR',
         availability: 'https://schema.org/InStock',
       },
     },

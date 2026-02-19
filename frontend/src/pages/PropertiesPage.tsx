@@ -22,7 +22,11 @@ export interface Property {
   description: string;
   amenities: string[];
   phone: string;
+  isVerified?: boolean;
+  isFeatured?: boolean;
 }
+
+import PropertyMapView from '../components/properties/PropertyMapView';
 
 const PropertiesPage: React.FC = () => {
   useSEO({
@@ -30,7 +34,7 @@ const PropertiesPage: React.FC = () => {
     description: 'Browse apartments, houses, villas, and more. Filter by location, price, bedrooms, and amenities.',
   });
 
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -116,9 +120,9 @@ const PropertiesPage: React.FC = () => {
 
     // Filter by amenities (must have all selected)
     if (filters.amenities && filters.amenities.length > 0) {
-      result = result.filter(p => 
-        filters.amenities!.every(filterAmenity => 
-          p.amenities.some(propertyAmenity => 
+      result = result.filter(p =>
+        filters.amenities!.every(filterAmenity =>
+          p.amenities.some(propertyAmenity =>
             propertyAmenity.toLowerCase() === filterAmenity.toLowerCase()
           )
         )
@@ -144,7 +148,11 @@ const PropertiesPage: React.FC = () => {
         break;
       case 'featured':
       default:
-        // Featured could be a flag, or just default order.
+        result.sort((a, b) => {
+          if (a.isFeatured && !b.isFeatured) return -1;
+          if (!a.isFeatured && b.isFeatured) return 1;
+          return 0;
+        });
         break;
     }
 
@@ -159,7 +167,7 @@ const PropertiesPage: React.FC = () => {
     setSortBy(sort);
   };
 
-  const handleViewChange = (mode: 'grid' | 'list') => {
+  const handleViewChange = (mode: 'grid' | 'list' | 'map') => {
     setViewMode(mode);
   };
 
@@ -214,7 +222,13 @@ const PropertiesPage: React.FC = () => {
 
           {/* Properties Grid */}
           {!loading && !error && filteredProperties.length > 0 && (
-            <PropertiesGrid properties={filteredProperties} viewMode={viewMode} />
+            <>
+              {viewMode === 'map' ? (
+                <PropertyMapView properties={filteredProperties} />
+              ) : (
+                <PropertiesGrid properties={filteredProperties} viewMode={viewMode} />
+              )}
+            </>
           )}
         </div>
       </div>

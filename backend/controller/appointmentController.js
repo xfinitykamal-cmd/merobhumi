@@ -3,7 +3,7 @@ import Property from '../models/propertymodel.js';
 import Appointment from '../models/appointmentModel.js';
 import User from '../models/Usermodel.js';
 import transporter from "../config/nodemailer.js";
-import { getSchedulingEmailTemplate,getEmailTemplate } from '../email.js';
+import { getSchedulingEmailTemplate, getEmailTemplate } from '../email.js';
 
 // Format helpers
 const formatRecentProperties = (properties) => {
@@ -121,7 +121,7 @@ const getViewsData = async () => {
       date.setDate(date.getDate() - i);
       const dateString = date.toISOString().split('T')[0];
       labels.push(dateString);
-      
+
       const stat = stats.find(s => s._id === dateString);
       data.push(stat ? stat.count : 0);
     }
@@ -188,7 +188,7 @@ export const getAllAppointments = async (req, res) => {
 export const updateAppointmentStatus = async (req, res) => {
   try {
     const { appointmentId, status } = req.body;
-    
+
     const appointment = await Appointment.findByIdAndUpdate(
       appointmentId,
       { status },
@@ -209,7 +209,7 @@ export const updateAppointmentStatus = async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL,
           to: recipientEmail,
-          subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} - BuildEstate`,
+          subject: `Viewing Appointment ${status.charAt(0).toUpperCase() + status.slice(1)} - Merobhumi`,
           html: getEmailTemplate(appointment, status)
         };
 
@@ -293,7 +293,7 @@ export const scheduleViewing = async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL,
           to: recipientEmail,
-          subject: 'Viewing Scheduled - BuildEstate',
+          subject: 'Viewing Scheduled - Merobhumi',
           html: getSchedulingEmailTemplate(appointment, date, time, notes || message || '')
         };
         await transporter.sendMail(mailOptions);
@@ -351,7 +351,7 @@ export const cancelAppointment = async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL,
           to: recipientEmail,
-          subject: 'Appointment Cancelled - BuildEstate',
+          subject: 'Appointment Cancelled - Merobhumi',
           html: getEmailTemplate(appointment, 'cancelled')
         };
 
@@ -397,7 +397,7 @@ export const getAppointmentsByUser = async (req, res) => {
 export const updateAppointmentMeetingLink = async (req, res) => {
   try {
     const { appointmentId, meetingLink } = req.body;
-    
+
     const appointment = await Appointment.findByIdAndUpdate(
       appointmentId,
       { meetingLink },
@@ -418,7 +418,7 @@ export const updateAppointmentMeetingLink = async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL,
           to: recipientEmail,
-          subject: 'Meeting Link Updated - BuildEstate',
+          subject: 'Meeting Link Updated - Merobhumi',
           html: getEmailTemplate(appointment, 'confirmed')
         };
 
@@ -541,9 +541,9 @@ export const getUpcomingAppointments = async (req, res) => {
       date: { $gte: now },
       status: { $in: ['pending', 'confirmed'] }
     })
-    .populate('propertyId', 'title location image')
-    .sort({ date: 1, time: 1 })
-    .limit(5);
+      .populate('propertyId', 'title location image')
+      .sort({ date: 1, time: 1 })
+      .limit(5);
 
     res.json({
       success: true,

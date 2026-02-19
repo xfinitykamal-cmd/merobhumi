@@ -15,7 +15,7 @@ const AboutHeritageSection: React.FC = () => {
               <div className="relative h-[735px] bg-[rgba(242,239,233,0.3)] border border-[rgba(230,224,218,0.5)] rounded-lg overflow-hidden">
                 <div className="absolute inset-4">
                   <div className="relative h-full w-full overflow-hidden">
-                    <img 
+                    <img
                       src={heritageImage}
                       alt="Architectural detail"
                       className="w-full h-full object-cover"
@@ -49,15 +49,11 @@ const AboutHeritageSection: React.FC = () => {
             {/* Description Paragraphs */}
             <div className="space-y-6 mb-8">
               <p className="font-manrope font-extralight text-base leading-[26px] text-[#4b5563]">
-                Founded by architects and data scientists, BuildEstate emerged from a
-                simple observation: the search for a home had become a transaction, losing
-                the emotional resonance of finding one's sanctuary.
+                Merobhumi emerged from a simple observation: the search for property in Nepal needed a more reliable, transparent, and user-centric approach to finding a home or investment.
               </p>
 
               <p className="font-manrope font-extralight text-base leading-[26px] text-[#4b5563]">
-                We set out to bridge the gap between cold data and warm living spaces. By
-                harnessing advanced AI, we don't just match square footage; we match
-                lifestyles, aesthetics, and the intangible feelings that make a house a home.
+                We set out to bridge the gap between traditional listings and modern search needs. By combining local expertise with advanced digital tools, we ensure that every square foot is verified, and every potential home matches the lifestyle of our users.
               </p>
             </div>
 
@@ -70,8 +66,8 @@ const AboutHeritageSection: React.FC = () => {
             </blockquote>
 
             {/* Link */}
-            <a 
-              href="#team" 
+            <a
+              href="#team"
               className="inline-flex items-center gap-2 border-b border-[#221410] pb-1 group hover:border-[#D4755B] transition-colors"
             >
               <span className="font-space-mono text-sm text-[#221410] group-hover:text-[#D4755B] transition-colors">

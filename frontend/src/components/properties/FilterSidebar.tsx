@@ -23,7 +23,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
   ];
 
   const availabilityTypes = [
-    { id: 'buy', label: 'Buy' },
+    { id: 'sale', label: 'Buy' },
     { id: 'rent', label: 'Rent' },
   ];
 
@@ -95,7 +95,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
           <h2 className="font-manrope font-extralight text-lg text-[#111827]">
             Refine Your Search
           </h2>
-          <button 
+          <button
             onClick={handleReset}
             className="font-manrope font-extralight text-sm text-[#D4755B] hover:underline"
           >
@@ -108,7 +108,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
           <h3 className="font-manrope font-bold text-sm text-[#111827] mb-4 uppercase tracking-wider">
             Location
           </h3>
-          
+
           {/* Search Input */}
           <div className="relative mb-3">
             <span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] text-lg">
@@ -134,11 +134,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
               <button
                 key={avail.id}
                 onClick={() => setSelectedAvailability(selectedAvailability === avail.id ? '' : avail.id)}
-                className={`flex-1 h-11 rounded-xl border font-manrope font-bold text-sm transition-all ${
-                  selectedAvailability === avail.id
+                className={`flex-1 h-11 rounded-xl border font-manrope font-bold text-sm transition-all ${selectedAvailability === avail.id
                     ? 'bg-[#D4755B] border-[#D4755B] text-white shadow-md'
                     : 'bg-white border-[#E6E0DA] text-[#6B7280] hover:border-[#D4755B] hover:text-[#D4755B]'
-                }`}
+                  }`}
               >
                 {avail.label}
               </button>
@@ -191,8 +190,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
             />
           </div>
           <div className="flex justify-between px-1">
-             <span className="font-manrope text-xs text-[#9CA3AF]">₹0</span>
-             <span className="font-manrope text-xs text-[#9CA3AF]">₹20 Cr+</span>
+            <span className="font-manrope text-xs text-[#9CA3AF]">₹0</span>
+            <span className="font-manrope text-xs text-[#9CA3AF]">₹20 Cr+</span>
           </div>
         </div>
 
@@ -201,17 +200,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
           <h3 className="font-manrope font-bold text-sm text-[#111827] mb-4 uppercase tracking-wider">
             Property Type
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-3">
             {propertyTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => togglePropertyType(type.label)}
-                className={`h-[80px] rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
-                  selectedPropertyType.includes(type.label)
+                className={`h-[80px] rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${selectedPropertyType.includes(type.label)
                     ? 'bg-[#D4755B] border-[#D4755B] text-white shadow-md'
                     : 'bg-white border-[#E6E0DA] text-[#6B7280] hover:border-[#D4755B] hover:text-[#D4755B]'
-                }`}
+                  }`}
               >
                 <span className="material-icons text-2xl">
                   {type.icon}
@@ -234,11 +232,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
               <button
                 key={num}
                 onClick={() => setBedrooms(num)}
-                className={`flex-1 h-10 rounded-lg font-manrope font-bold text-sm border transition-all ${
-                  bedrooms === num
+                className={`flex-1 h-10 rounded-lg font-manrope font-bold text-sm border transition-all ${bedrooms === num
                     ? 'bg-[#D4755B] border-[#D4755B] text-white'
                     : 'bg-white border-[#E6E0DA] text-[#6B7280] hover:border-[#D4755B]'
-                }`}
+                  }`}
               >
                 {num === 0 ? 'Any' : num === 5 ? '5+' : num}
               </button>
@@ -256,11 +253,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
               <button
                 key={num}
                 onClick={() => setBathrooms(num)}
-                className={`flex-1 h-10 rounded-lg font-manrope font-bold text-sm border transition-all ${
-                  bathrooms === num
+                className={`flex-1 h-10 rounded-lg font-manrope font-bold text-sm border transition-all ${bathrooms === num
                     ? 'bg-[#D4755B] border-[#D4755B] text-white'
                     : 'bg-white border-[#E6E0DA] text-[#6B7280] hover:border-[#D4755B]'
-                }`}
+                  }`}
               >
                 {num === 0 ? 'Any' : num === 4 ? '4+' : num}
               </button>
@@ -275,19 +271,17 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {amenitiesList.map((amenity) => (
-              <label 
+              <label
                 key={amenity}
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                  selectedAmenities.includes(amenity)
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${selectedAmenities.includes(amenity)
                     ? 'bg-[rgba(212,117,91,0.05)] border-[#D4755B]'
                     : 'bg-white border-[#E6E0DA] hover:border-[#D4755B]'
-                }`}
+                  }`}
               >
-                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
-                  selectedAmenities.includes(amenity)
+                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedAmenities.includes(amenity)
                     ? 'bg-[#D4755B] border-[#D4755B]'
                     : 'bg-white border-[#D1D5DB]'
-                }`}>
+                  }`}>
                   {selectedAmenities.includes(amenity) && (
                     <span className="material-icons text-white text-xs font-bold">check</span>
                   )}
@@ -298,9 +292,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange }) => {
                   checked={selectedAmenities.includes(amenity)}
                   onChange={() => toggleAmenity(amenity)}
                 />
-                <span className={`font-manrope text-sm ${
-                   selectedAmenities.includes(amenity) ? 'text-[#D4755B] font-semibold' : 'text-[#4B5563]'
-                }`}>
+                <span className={`font-manrope text-sm ${selectedAmenities.includes(amenity) ? 'text-[#D4755B] font-semibold' : 'text-[#4B5563]'
+                  }`}>
                   {amenity}
                 </span>
               </label>

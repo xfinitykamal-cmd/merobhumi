@@ -211,7 +211,10 @@ const PropertyListings = () => {
   const handleRemoveProperty = async (propertyId, propertyTitle) => {
     if (!window.confirm(`Remove "${propertyTitle}"? This cannot be undone.`)) return;
     try {
-      const response = await axios.post(`${backendurl}/api/products/remove`, { id: propertyId });
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${backendurl}/api/products/remove`, { id: propertyId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (response.data.success) {
         toast.success("Property removed successfully");
         await fetchProperties();

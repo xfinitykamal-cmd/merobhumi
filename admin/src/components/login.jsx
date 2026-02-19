@@ -76,7 +76,7 @@ const Login = () => {
               <Home className="h-5 w-5 text-white" />
             </div>
             <div>
-              <div className="text-xl font-bold text-[#FAF8F4]">BuildEstate</div>
+              <div className="text-xl font-bold text-[#FAF8F4]">Merobhumi</div>
               <div className="text-xs text-[#9CA3AF] uppercase tracking-widest">Admin Panel</div>
             </div>
           </div>
@@ -107,7 +107,7 @@ const Login = () => {
         {/* Footer */}
         <div className="relative z-10 flex items-center gap-2 text-xs text-[#5A5856]">
           <Shield className="w-3.5 h-3.5" />
-          <span>Secured with 256-bit encryption • BuildEstate © 2025</span>
+          <span>Secured with 256-bit encryption • Merobhumi © 2026</span>
         </div>
       </motion.div>
 
@@ -124,7 +124,7 @@ const Login = () => {
             <div className="w-9 h-9 bg-[#1C1B1A] rounded-xl flex items-center justify-center">
               <Home className="h-5 w-5 text-[#D4755B]" />
             </div>
-            <div className="text-lg font-bold text-[#1C1B1A]">BuildEstate Admin</div>
+            <div className="text-lg font-bold text-[#1C1B1A]">Merobhumi Admin</div>
           </div>
 
           {/* Header */}
@@ -156,7 +156,7 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="admin@buildestate.com"
+                  placeholder="admin@merobhumi.com"
                   className={cn(
                     "w-full pl-11 pr-4 py-3.5 bg-white border rounded-xl text-[#1C1B1A] placeholder-[#9CA3AF] text-sm transition-all duration-200 outline-none",
                     focusedField === "email"
@@ -226,6 +226,16 @@ const Login = () => {
                 </>
               )}
             </motion.button>
+
+            <div className="text-center mt-6">
+              <a
+                href="http://localhost:5173"
+                className="inline-flex items-center gap-2 text-sm text-[#5A5856] hover:text-[#D4755B] transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                <span>Back to Merobhumi Website</span>
+              </a>
+            </div>
           </form>
 
           {/* Security note */}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthHeader from '../components/auth/AuthHeader';
 import SignInForm from '../components/auth/SignInForm';
 import SocialLoginButtons from '../components/auth/SocialLoginButtons';
@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +15,9 @@ const SignInPage: React.FC = () => {
     try {
       setError(null);
       await login(formData.email, formData.password);
-      navigate('/');
+
+      const returnTo = location.state?.returnTo || '/';
+      navigate(returnTo, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
     }
@@ -61,6 +64,16 @@ const SignInPage: React.FC = () => {
               Sign Up
             </Link>
           </p>
+
+          <div className="mt-8 pt-6 border-t border-[#F1F5F9] text-center">
+            <a
+              href="http://localhost:5174/login"
+              className="font-manrope text-xs text-[#94A3B8] hover:text-[#D4755B] transition-colors uppercase tracking-widest flex items-center justify-center gap-2"
+            >
+              <span className="material-icons text-sm">admin_panel_settings</span>
+              Admin Portal
+            </a>
+          </div>
         </div>
 
         {/* Back to Home */}

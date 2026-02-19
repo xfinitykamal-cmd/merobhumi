@@ -1,8 +1,8 @@
-# BuildEstate — Backend API
+# Merobhumi — Backend API
 
-REST API server for the BuildEstate real estate platform. Built with Node.js, Express, and MongoDB.
+REST API server for the Merobhumi real estate platform. Built with Node.js, Express, and MongoDB.
 
-[![Live API](https://img.shields.io/badge/Live_API-On_Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://real-estate-website-backend-zfu7.onrender.com/)
+[![Live API](https://img.shields.io/badge/Live_API-On_Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://api.merobhumi.com)
 
 ---
 
@@ -12,8 +12,8 @@ REST API server for the BuildEstate real estate platform. Built with Node.js, Ex
 - **Property CRUD** — Add, list, update, delete properties with up to 4 images each
 - **Image Upload** — Multer file handling → ImageKit CDN storage
 - **Appointment Scheduling** — Guest and authenticated bookings with email notifications
-- **AI Property Search** — GPT-4.1 (GitHub Models) + Firecrawl web scraping
-- **Location Trends** — Scraped market data for Indian cities
+- **AI Property Search** — AI (GitHub Models) + Firecrawl web scraping
+- **Location Trends** — Scraped market data for Nepalese cities
 - **Contact Forms** — Submissions stored to MongoDB
 - **Admin Dashboard Stats** — Property, user, and appointment counts
 - **Rate Limiting** — express-rate-limit for DDoS protection
@@ -249,7 +249,7 @@ backend/
 6. Add all env variables from `.env.example`
 7. Set `NODE_ENV=production` and `WEBSITE_URL` to your frontend URL
 
-Currently deployed at: **https://real-estate-website-backend-zfu7.onrender.com**
+Currently deployed at: **https://api.merobhumi.com**
 
 ## Related
 
@@ -259,4 +259,4 @@ Currently deployed at: **https://real-estate-website-backend-zfu7.onrender.com**
 
 ---
 
-Built with ❤️ by [Aayush Vaghela](https://aayush-vaghela.vercel.app/)
+Built with ❤️ by [Merobhumi Team](https://merobhumi.com)

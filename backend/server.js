@@ -1,5 +1,6 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
@@ -13,11 +14,11 @@ import newsrouter from './routes/newsRoute.js';
 import appointmentRouter from './routes/appointmentRoute.js';
 import adminRouter from './routes/adminRoute.js';
 import propertyRoutes from './routes/propertyRoutes.js';
+import planRoutes from './routes/planRoutes.js';
 import getStatusPage from './serverweb.js';
 
 
-dotenv.config({ path: './.env.local' });  // local dev
-dotenv.config();                          // .env fallback / Render uses process-level env vars
+// Environment configuration handled at the top
 
 const app = express();
 
@@ -82,13 +83,13 @@ app.use(cors({
     'http://localhost:4000',
     'http://localhost:5174',
     'http://localhost:5173',
-    'https://buildestate.vercel.app',
+    'https://merobhumi.com',
     'https://real-estate-website-admin.onrender.com',
     'https://real-estate-website-backend-zfu7.onrender.com',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'], // Added HEAD
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'token', 'merobhumi_token']
 }));
 
 // Database connection
@@ -106,6 +107,7 @@ app.use('/api/forms', formrouter);
 app.use('/api/news', newsrouter);
 app.use('/api/appointments', appointmentRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/plans', planRoutes);
 app.use('/api', propertyRoutes);
 
 
@@ -136,6 +138,8 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+app.get('/api/test', (req, res) => res.json({ success: true, message: "API test ok" }));
+
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('👋 SIGTERM received. Shutting down gracefully...');
@@ -144,8 +148,8 @@ process.on('SIGTERM', () => {
 
 // Status check endpoint
 app.get('/status', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     time: new Date().toISOString(),
     uptime: process.uptime(),
     version: process.env.npm_package_version || '1.0.0',

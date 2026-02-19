@@ -16,7 +16,7 @@ const apiClient = axios.create({
 // ── Request interceptor: attach auth token ──────────────────
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('buildestate_token');
+    const token = localStorage.getItem('merobhumi_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +30,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('buildestate_token');
+      localStorage.removeItem('merobhumi_token');
       // Optionally redirect to login
       // window.location.href = '/signin';
     }
@@ -68,11 +68,42 @@ export const userAPI = {
 
 // Properties (CRUD — admin-managed listings)
 export const propertiesAPI = {
-  getAll: () =>
-    apiClient.get('/products/list'),
+  getAll: (status?: string) =>
+    apiClient.get(`/products/list${status ? `?status=${status}` : ''}`),
+
+  getMyListings: () =>
+    apiClient.get('/products/list?owner=me'),
 
   getById: (id: string) =>
     apiClient.get(`/products/single/${id}`),
+
+  add: (formData: FormData) =>
+    apiClient.post('/products/add', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+
+  update: (id: string, formData: FormData) =>
+    apiClient.post('/products/update', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+
+  remove: (id: string) =>
+    apiClient.post('/products/remove', { id }),
+};
+
+// Admin Control
+export const adminAPI = {
+  getStats: () =>
+    apiClient.get('/admin/stats'),
+
+  getAppointments: () =>
+    apiClient.get('/admin/appointments'),
+
+  updateAppointmentStatus: (appointmentId: string, status: string) =>
+    apiClient.put('/admin/appointments/status', { appointmentId, status }),
+
+  updatePropertyStatus: (propertyId: string, status: string) =>
+    apiClient.put('/admin/properties/status', { propertyId, status }),
 };
 
 // Appointments (supports guest + auth bookings)
@@ -108,6 +139,15 @@ export const aiAPI = {
 
   locationTrends: (city: string) =>
     apiClient.get(`/locations/${encodeURIComponent(city)}/trends`),
+};
+
+// Subscription Plans
+export const plansAPI = {
+  getAll: () =>
+    apiClient.get('/plans/all'),
+
+  subscribe: (planId: string) =>
+    apiClient.post('/plans/subscribe', { planId }),
 };
 
 // Contact Form

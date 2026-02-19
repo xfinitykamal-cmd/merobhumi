@@ -1,20 +1,19 @@
-# Use the official Node.js image as the base image
-FROM node:18
+# Backend Dockerfile
+FROM node:20-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+# Copy package files
+COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
-# Copy the rest of the application code
+# Copy source code
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 4000
+# Expose port
+EXPOSE 5000
 
-# Start the application
-CMD ["node", "server.js"]
+# Run the application
+CMD ["npm", "start"]

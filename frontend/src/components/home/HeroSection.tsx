@@ -1,170 +1,163 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import happyHomeowner1 from '../../images/Happy Homeowners_1.jpg';
-import happyHomeowner2 from '../../images/Happy Homeowners_2.jpg';
-import happyHomeowner3 from '../../images/Team section.jpg';
-import rightFeatureCard from '../../images/Right side feature card.jpg';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection: React.FC = () => {
-  const propertyImages = [
-    happyHomeowner1,
-    happyHomeowner2,
-    happyHomeowner3,
-    rightFeatureCard, 
-  ];
+  const navigate = useNavigate();
+  const [searchType, setSearchType] = useState<'Buy' | 'Rent' | 'Land'>('Buy');
+  const [location, setLocation] = useState('');
+  const [budget, setBudget] = useState('');
+  const [propertyType, setPropertyType] = useState('All Residential');
+
+  const handleSearch = () => {
+    const queryParams = new URLSearchParams();
+    if (location) queryParams.append('city', location);
+    if (searchType === 'Buy') queryParams.append('availability', 'sale');
+    if (searchType === 'Rent') queryParams.append('availability', 'rent');
+    if (searchType === 'Land') queryParams.append('type', 'Land');
+    navigate(`/properties?${queryParams.toString()}`);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" as const }
+      transition: { duration: 0.6, ease: "easeOut" as const }
     }
   };
 
   return (
-    <section className="relative bg-[#F8F6F6] pt-20 pb-32 overflow-hidden">
-        {/* Background decorative blurs */}
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-            x: [0, 20, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut" as const
-          }}
-          className="absolute right-0 top-14 w-64 h-64 bg-[rgba(236,70,19,0.1)] rounded-full blur-[32px]" 
+    <section className="relative min-h-[700px] flex items-center justify-center pt-24 pb-32 overflow-hidden">
+      {/* Premium Background with Gradient Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
+        <img
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600"
+          alt="Luxury Nepal Real Estate"
+          className="w-full h-full object-cover scale-105 animate-slow-zoom"
         />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
-            x: [0, -30, 0], 
-            y: [0, 30, 0],
-          }}
-          transition={{ 
-            duration: 10,
-            delay: 1,
-            repeat: Infinity,
-            ease: "easeInOut" as const
-          }}
-          className="absolute left-[738px] bottom-22 w-64 h-64 bg-[rgba(254,215,170,0.2)] rounded-full blur-[32px]" 
-        />
+      </div>
 
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {/* Badge */}
-              <motion.div variants={itemVariants} className="inline-flex items-center gap-3 bg-[rgba(212,117,91,0.1)] border border-[rgba(212,117,91,0.2)] rounded-full px-4 py-2 mb-10">
-                <div className="w-2 h-2 bg-[#D4755B] rounded-full" />
-                <span className="font-manrope font-bold text-xs text-[#D4755B] uppercase tracking-wider">
-                  AI-Powered Real Estate
-                </span>
-              </motion.div>
+      <div className="max-w-[1280px] mx-auto px-8 relative z-20 text-center text-white">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col items-center"
+        >
+          {/* Headings with improved shadows for readability */}
+          <motion.div variants={itemVariants} className="mb-12">
+            <h1 className="font-syne font-bold text-5xl lg:text-8xl text-white leading-[1.1] mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+              Find Your <br />
+              <span className="text-[#D4755B]">Dream Home</span>
+            </h1>
+            <p className="font-manrope text-lg md:text-2xl text-white/95 max-w-2xl mx-auto font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+              Nepal's most trusted marketplace for verified residential and commercial properties.
+            </p>
+          </motion.div>
 
-              {/* Heading */}
-              <motion.h1 variants={itemVariants} className="font-fraunces text-[56px] lg:text-[70px] leading-[1.1] text-[#111827] mb-8">
-                Discover Your<br />
-                <span className="italic text-[#D4755B]">Dream Home</span> with<br />
-                AI Intelligence
-              </motion.h1>
+          {/* Redesigned Search Container */}
+          <motion.div
+            variants={itemVariants}
+            className="w-full max-w-4xl bg-white rounded-3xl shadow-[0px_30px_60px_-15px_rgba(0,0,0,0.4)] p-2 md:p-3 overflow-hidden"
+          >
+            {/* Search Tabs */}
+            <div className="flex gap-1 mb-2 px-4 pt-2">
+              {['Buy', 'Rent', 'Land'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSearchType(type as any)}
+                  className={`px-6 py-2 rounded-full font-manrope font-bold text-sm transition-all ${searchType === type
+                    ? 'bg-[#D4755B] text-white'
+                    : 'text-[#4b5563] hover:bg-[#F3F4F6]'
+                    }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
 
-              {/* Description */}
-              <motion.p variants={itemVariants} className="font-manrope font-light text-xl leading-7 text-[#4b5563] mb-12 max-w-[676px]">
-                Experience the future of real estate. Our proprietary AI curates the market's
-                finest listings tailored specifically to your lifestyle, removing the noise from
-                your property search.
-              </motion.p>
+            {/* Search Input Bar */}
+            <div className="flex flex-col md:flex-row items-center gap-2">
+              <div className="flex-1 w-full flex items-center bg-[#F9FAFB] rounded-2xl px-5 py-3 border border-transparent focus-within:border-[#D4755B]/30 transition-all">
+                <span className="material-icons text-[#D4755B] mr-3">location_on</span>
+                <input
+                  type="text"
+                  placeholder="Enter City, Locality or Project..."
+                  className="bg-transparent w-full font-manrope text-[#111827] focus:outline-none placeholder:text-[#9CA3AF]"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </div>
 
-              {/* CTA Buttons */}
-              <motion.div variants={itemVariants} className="flex flex-wrap gap-4 mb-10">
-                <Link to="/properties" className="bg-[#D4755B] text-white font-manrope font-bold text-lg px-8 py-4 rounded-xl shadow-[0px_10px_15px_-3px_rgba(212,117,91,0.25),0px_4px_6px_-4px_rgba(212,117,91,0.25)] hover:bg-[#B86851] transition-all hover:shadow-xl inline-flex items-center">
-                  Explore Properties
-                  <span className="font-material-icons text-sm ml-2">arrow_forward</span>
-                </Link>
-                <Link to="/ai-hub" className="border-2 border-[#d1d5db] text-[#374151] font-manrope font-bold text-lg px-8 py-4 rounded-xl hover:border-[#D4755B] hover:text-[#D4755B] transition-all inline-flex items-center">
-                  <span className="font-material-icons text-2xl text-[#D4755B] mr-2">smart_toy</span>
-                  {import.meta.env.PROD ? 'AI Property Hub' : 'Try AI Search'}
-                </Link>
-              </motion.div>
-
-              {/* Social Proof */}
-              <motion.div variants={itemVariants} className="flex items-center gap-4">
-                <div className="flex -space-x-2">
-                  <img src={propertyImages[0]} alt="" className="w-10 h-10 rounded-full border-2 border-[#f8f6f6] object-cover" />
-                  <img src={propertyImages[1]} alt="" className="w-10 h-10 rounded-full border-2 border-[#f8f6f6] object-cover" />
-                  <img src={propertyImages[2]} alt="" className="w-10 h-10 rounded-full border-2 border-[#f8f6f6] object-cover" />
-                  <div className="w-10 h-10 bg-[#111827] rounded-full border-2 border-[#f8f6f6] flex items-center justify-center">
-                    <span className="font-manrope font-bold text-xs text-white">+2k</span>
-                  </div>
+              <div className="w-full md:w-auto flex items-center bg-[#F9FAFB] rounded-2xl px-5 py-3 gap-4">
+                <div className="flex items-center gap-2 cursor-pointer group">
+                  <span className="material-icons text-[#D4755B] text-sm">home</span>
+                  <select
+                    className="bg-transparent font-manrope text-[#4b5563] text-sm font-bold focus:outline-none cursor-pointer"
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                  >
+                    <option>Property Type</option>
+                    <option>Flat/Apartment</option>
+                    <option>House/Villa</option>
+                    <option>Plots/Land</option>
+                  </select>
                 </div>
-                <span className="font-manrope text-sm text-[#6b7280]">
-                  Join 2,000+ happy homeowners
-                </span>
-              </motion.div>
-            </motion.div>
-
-            {/* Right - Featured Property Card */}
-            <div className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-[0px_25px_50px_-12px_#e5e7eb]">
-                <div className="relative h-[625px]">
-                  <img
-                    src={propertyImages[3]}
-                    alt="Villa Serenity"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  {/* Property Info Overlay */}
-                  <div className="absolute bottom-6 left-6 right-6 backdrop-blur-md bg-white/90 border border-white/20 rounded-xl p-4 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1)]">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-fraunces font-bold text-lg text-[#111827] mb-1">Villa Serenity</h3>
-                        <p className="font-space-mono text-xs text-[#6b7280] uppercase tracking-wide">Beverly Hills, CA</p>
-                      </div>
-                      <div className="bg-[rgba(212,117,91,0.1)] px-2 py-1 rounded">
-                        <span className="font-manrope font-bold text-xs text-[#D4755B]">AI MATCH: 98%</span>
-                      </div>
-                    </div>
-                    <div className="border-t border-[#e5e7eb] pt-3 flex items-center justify-between">
-                      <span className="font-space-mono text-sm text-[#4b5563]">$4,250,000</span>
-                      <div className="flex items-center gap-4 text-[#4b5563]">
-                        <div className="flex items-center gap-1">
-                          <span className="font-material-icons text-xs">bed</span>
-                          <span className="font-manrope text-sm">4</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-material-icons text-xs">shower</span>
-                          <span className="font-manrope text-sm">3.5</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="w-[1px] h-6 bg-[#E5E7EB]" />
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <span className="material-icons text-[#D4755B] text-sm">payments</span>
+                  <select
+                    className="bg-transparent font-manrope text-[#4b5563] text-sm font-bold focus:outline-none cursor-pointer"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                  >
+                    <option>Budget</option>
+                    <option>Rs. 50 Lac - 1 Cr</option>
+                    <option>Rs. 1 Cr - 5 Cr</option>
+                    <option>Rs. 5 Cr+</option>
+                  </select>
                 </div>
               </div>
+
+              <button
+                onClick={handleSearch}
+                className="w-full md:w-auto bg-[#D4755B] text-white px-10 py-4 rounded-2xl font-manrope font-bold text-lg hover:bg-[#B86851] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95"
+              >
+                <span className="material-icons">search</span>
+                Search
+              </button>
             </div>
-          </div>
-        </div>
-      </section>
+          </motion.div>
+
+          {/* Quick Suggestions */}
+          <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center gap-4">
+            <span className="font-manrope text-sm text-white/80 py-1 drop-shadow-md">Popular:</span>
+            {['Budhanilkantha', 'Jhamsikhel', 'Lakeside Pokhara', 'Sanepa'].map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setLocation(tag)}
+                className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold hover:bg-white/20 transition-all shadow-sm"
+              >
+                {tag}
+              </button>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 
