@@ -1,0 +1,26 @@
+{
+  "name": "Merobhumi - AI-Powered Real Estate in Nepal",
+  "short_name": "Merobhumi",
+  "description": "Nepal's premium real estate marketplace with AI-driven property insights",
+  "dir": "auto",
+  "lang": "en-US",
+  "display": "standalone",
+  "orientation": "any",
+  "start_url": "/",
+  "background_color": "#FAF8F4",
+  "theme_color": "#D4755B",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
