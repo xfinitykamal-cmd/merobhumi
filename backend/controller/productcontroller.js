@@ -135,9 +135,8 @@ const addproperty = async (req, res) => {
     } catch (error) {
         console.error("Detailed Error adding product:", error);
         res.status(500).json({
-            message: "Server Error",
-            success: false,
-            error: error.message
+            message: "Server Error: " + error.message,
+            success: false
         });
     }
 };
@@ -186,7 +185,7 @@ const removeproperty = async (req, res) => {
         return res.json({ message: "Property removed successfully", success: true });
     } catch (error) {
         console.log("Error removing product: ", error);
-        return res.status(500).json({ message: "Server Error", success: false });
+        return res.status(500).json({ message: "Server Error: " + error.message, success: false });
     }
 };
 
@@ -264,7 +263,7 @@ const updateproperty = async (req, res) => {
         res.json({ message: "Property updated successfully", success: true });
     } catch (error) {
         console.log("Error updating product: ", error);
-        res.status(500).json({ message: "Server Error", success: false });
+        res.status(500).json({ message: "Server Error: " + error.message, success: false });
     }
 };
 
@@ -278,7 +277,7 @@ const singleproperty = async (req, res) => {
         res.json({ property, success: true });
     } catch (error) {
         console.log("Error fetching property:", error);
-        res.status(500).json({ message: "Server Error", success: false });
+        res.status(500).json({ message: "Server Error: " + error.message, success: false });
     }
 };
 
