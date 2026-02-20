@@ -149,6 +149,22 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+app.get('/api/debug-db', async (req, res) => {
+  try {
+    const dbName = mongoose.connection.name;
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    const plansCount = await mongoose.model('Plan').countDocuments();
+    res.json({
+      success: true,
+      dbName,
+      collections: collections.map(c => c.name),
+      plansCount
+    });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 app.get('/api/test', (req, res) => res.json({ success: true, message: "API test ok" }));
 
 // Graceful shutdown
