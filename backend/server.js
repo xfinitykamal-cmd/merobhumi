@@ -89,7 +89,7 @@ app.use(cors({
       'http://localhost:5173',
       'https://merobhumi.com',
       'https://real-estate-website-admin.onrender.com',
-      'https://real-estate-website-backend-zfu7.onrender.com',
+      'https://merobhumi.onrender.com',
     ];
 
     // Allow any Vercel domain (production, preview, or development)
