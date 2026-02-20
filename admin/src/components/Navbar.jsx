@@ -14,7 +14,8 @@ import {
   User,
   ChevronDown,
   Settings,
-  ClipboardCheck
+  ClipboardCheck,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -56,6 +57,8 @@ const Navbar = () => {
     { path: '/approvals', label: 'Approvals', icon: ClipboardCheck },
     { path: '/plans', label: 'Plans', icon: List },
     { path: '/appointments', label: 'Appointments', icon: Calendar },
+    { path: '/inquiries', label: 'Inquiries', icon: MessageSquare },
+    { path: '/users', label: 'Users', icon: User },
   ];
 
   return (

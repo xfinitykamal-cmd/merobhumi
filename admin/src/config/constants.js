@@ -6,8 +6,9 @@ export const API_ENDPOINTS = {
   login: '/api/users/admin',
   properties: '/api/products',
   appointments: '/api/appointments',
-  users: '/api/users',
-  admin: '/api/admin'
+  users: '/api/admin/users',
+  admin: '/api/admin',
+  inquiries: '/api/inquiries'
 };
 
 // App constants

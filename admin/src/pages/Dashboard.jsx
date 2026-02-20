@@ -3,7 +3,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import {
   Home, Users, Calendar, TrendingUp, RefreshCw, Activity,
-  Building2, Eye, BarChart3, AlertCircle
+  Building2, Eye, BarChart3, AlertCircle, MessageSquare
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -113,10 +113,17 @@ const Dashboard = () => {
       description: "Currently active",
     },
     {
+      title: "New Inquiries",
+      value: stats?.newInquiries,
+      icon: MessageSquare,
+      accent: { bg: "bg-blue-50", icon: "text-blue-600" },
+      description: "Recent marketplace leads",
+    },
+    {
       title: "Total Users",
       value: stats?.totalUsers,
       icon: Users,
-      accent: { bg: "bg-blue-50", icon: "text-blue-600" },
+      accent: { bg: "bg-emerald-50", icon: "text-emerald-600" },
       description: "Registered accounts",
     },
     {

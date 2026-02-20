@@ -3,7 +3,8 @@ import {
   getAdminStats,
   getAllAppointments,
   updateAppointmentStatus,
-  updatePropertyStatus
+  updatePropertyStatus,
+  getAllUsers
 } from '../controller/adminController.js';
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
@@ -16,5 +17,6 @@ router.get('/stats', getAdminStats);
 router.get('/appointments', getAllAppointments);
 router.put('/appointments/status', updateAppointmentStatus);
 router.put('/properties/status', updatePropertyStatus);
+router.get('/users', getAllUsers);
 
 export default router;

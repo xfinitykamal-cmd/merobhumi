@@ -2,14 +2,17 @@ import Stats from "../models/statsModel.js";
 import Property from "../models/propertymodel.js";
 import Appointment from "../models/appointmentModel.js";
 import User from "../models/Usermodel.js";
+import Inquiry from "../models/Inquiry.js";
 import transporter from "../config/nodemailer.js";
 import { getEmailTemplate } from "../email.js";
 
-const formatRecentProperties = (properties) => {
-  return properties.map((property) => ({
-    type: "property",
-    description: `New property listed: ${property.title}`,
-    timestamp: property.createdAt,
+const formatRecentInquiries = (inquiries) => {
+  return inquiries.map((inquiry) => ({
+    type: "inquiry",
+    description: `New inquiry for ${inquiry.property?.title || "Property"} by ${inquiry.buyerName}`,
+    timestamp: inquiry.createdAt,
+    date: inquiry.createdAt,
+    title: `Inquiry: ${inquiry.buyerName}`,
   }));
 };
 
@@ -21,6 +24,18 @@ const formatRecentAppointments = (appointments) => {
         ? `${appointment.userId.name} scheduled viewing for ${appointment.propertyId.title}`
         : "Appointment scheduled (details unavailable)",
     timestamp: appointment.createdAt,
+    date: appointment.createdAt,
+    title: `Viewing: ${appointment.userId?.name || "Client"}`,
+  }));
+};
+
+const formatRecentProperties = (properties) => {
+  return properties.map((property) => ({
+    type: "property",
+    description: `New property listed: ${property.title}`,
+    timestamp: property.createdAt,
+    date: property.createdAt,
+    title: property.title,
   }));
 };
 
@@ -40,7 +55,8 @@ export const getAdminStats = async (req, res) => {
       Property.countDocuments({ status: "approved" }),
       User.countDocuments(),
       Appointment.countDocuments({ status: "pending" }),
-      Property.countDocuments({ status: "pending" }), // Count pending properties
+      Property.countDocuments({ status: "pending" }),
+      Inquiry.countDocuments({ status: "new" }),
       getRecentActivity(),
       getViewsData(),
     ]);
@@ -52,7 +68,8 @@ export const getAdminStats = async (req, res) => {
         activeListings,
         totalUsers,
         pendingAppointments,
-        pendingProperties, // New stat
+        pendingProperties,
+        newInquiries,
         recentActivity,
         viewsData,
       },
@@ -73,21 +90,16 @@ const getRecentActivity = async () => {
       .limit(5)
       .select("title createdAt");
 
-    const recentAppointments = await Appointment.find()
+    const recentInquiries = await Inquiry.find()
       .sort({ createdAt: -1 })
       .limit(5)
-      .populate("propertyId", "title")
-      .populate("userId", "name");
-
-    // Filter out appointments with missing user or property data
-    const validAppointments = recentAppointments.filter(
-      (appointment) => appointment.userId && appointment.propertyId
-    );
+      .populate("property", "title");
 
     return [
       ...formatRecentProperties(recentProperties),
       ...formatRecentAppointments(validAppointments),
-    ].sort((a, b) => b.timestamp - a.timestamp);
+      ...formatRecentInquiries(recentInquiries),
+    ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
   } catch (error) {
     console.error("Error getting recent activity:", error);
     return [];
@@ -253,6 +265,22 @@ export const updatePropertyStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error updating property status",
+    });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching users",
     });
   }
 };
