@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -21,6 +22,22 @@ import getStatusPage from './serverweb.js';
 // Environment configuration handled at the top
 
 const app = express();
+
+app.get('/api/debug-db', async (req, res) => {
+  try {
+    const dbName = mongoose.connection.name;
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    const plansCount = await mongoose.model('Plan').countDocuments();
+    res.json({
+      success: true,
+      dbName,
+      collections: collections.map(c => c.name),
+      plansCount
+    });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
 
 // Configure trust proxy for different environments
 if (process.env.NODE_ENV === 'production') {
@@ -149,21 +166,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-app.get('/api/debug-db', async (req, res) => {
-  try {
-    const dbName = mongoose.connection.name;
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const plansCount = await mongoose.model('Plan').countDocuments();
-    res.json({
-      success: true,
-      dbName,
-      collections: collections.map(c => c.name),
-      plansCount
-    });
-  } catch (error) {
-    res.json({ success: false, error: error.message });
-  }
-});
+
 
 app.get('/api/test', (req, res) => res.json({ success: true, message: "API test ok" }));
 
