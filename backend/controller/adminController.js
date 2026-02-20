@@ -48,6 +48,7 @@ export const getAdminStats = async (req, res) => {
       totalUsers,
       pendingAppointments,
       pendingProperties,
+      newInquiries,
       recentActivity,
       viewsData,
     ] = await Promise.all([

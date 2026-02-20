@@ -19,11 +19,6 @@ const Approvals = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem("token"); // Use stored token
-            const response = await axios.get(`${backendurl}/api/admin/stats`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            // Wait, admin stats doesn't return the properties list.
             // I should use the products list with status=pending.
             const propertiesResponse = await axios.get(`${backendurl}/api/products/list?status=pending`, {
                 headers: { Authorization: `Bearer ${token}` }
