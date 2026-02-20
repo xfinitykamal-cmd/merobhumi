@@ -23,22 +23,6 @@ import getStatusPage from './serverweb.js';
 
 const app = express();
 
-app.get('/api/debug-db', async (req, res) => {
-  try {
-    const dbName = mongoose.connection.name;
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const plansCount = await mongoose.model('Plan').countDocuments();
-    res.json({
-      success: true,
-      dbName,
-      collections: collections.map(c => c.name),
-      plansCount
-    });
-  } catch (error) {
-    res.json({ success: false, error: error.message });
-  }
-});
-
 // Configure trust proxy for different environments
 if (process.env.NODE_ENV === 'production') {
   // Trust first proxy (Render, Heroku, etc.)
