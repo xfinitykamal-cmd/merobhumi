@@ -127,7 +127,7 @@ export default function ProfilePage() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={cn(
-                                        "flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-xs font-bold transition-all",
+                                        "flex items-center gap-2 px-4 py-3 rounded-full whitespace-nowrap text-xs font-bold transition-all",
                                         activeTab === tab.id
                                             ? "bg-stitch-primary text-white shadow-lg shadow-stitch-primary/20"
                                             : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"

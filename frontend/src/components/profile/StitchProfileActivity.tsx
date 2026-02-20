@@ -32,7 +32,7 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
 
     return (
         <div className="lg:col-span-3 font-stitch-display">
-            <div className="bg-white dark:bg-slate-900 rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-800 overflow-x-auto hide-scrollbar">
+            <div className="hidden lg:block bg-white dark:bg-slate-900 rounded-t-xl border border-b-0 border-slate-200 dark:border-slate-800 overflow-x-auto hide-scrollbar">
                 <div className="flex">
                     {tabs.map((tab) => (
                         <button
@@ -81,11 +81,11 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                     <h4 className="text-sm font-black uppercase tracking-widest text-slate-400">Security</h4>
                                     <div className="space-y-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold uppercase text-slate-500 ml-1">Current Password</label>
+                                            <label className="text-xs font-bold uppercase text-slate-500 ml-1">Current Password</label>
                                             <input type="password" placeholder="••••••••" className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-stitch-primary outline-none transition-all" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-bold uppercase text-slate-500 ml-1">New Password</label>
+                                            <label className="text-xs font-bold uppercase text-slate-500 ml-1">New Password</label>
                                             <input type="password" placeholder="Min. 8 characters" className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-stitch-primary outline-none transition-all" />
                                         </div>
                                         <button className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all w-full md:w-auto">Update Password</button>
@@ -102,7 +102,7 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                             <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
                                                 <div>
                                                     <div className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight">{item.label}</div>
-                                                    <div className="text-[10px] text-slate-500 mt-0.5">{item.desc}</div>
+                                                    <div className="text-xs text-slate-500 mt-0.5">{item.desc}</div>
                                                 </div>
                                                 <div className="w-10 h-5 bg-stitch-primary rounded-full relative cursor-pointer shadow-inner">
                                                     <div className="absolute right-1 top-1 size-3 bg-white rounded-full shadow-sm"></div>
@@ -119,7 +119,7 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                 myListings.map((prop) => (
                                     <div key={prop._id} className="relative group">
                                         <StitchPropertyCardHorizontal property={prop} />
-                                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="absolute top-4 right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                             <button className="bg-white/90 backdrop-blur shadow-sm p-2 rounded-full text-blue-600 hover:scale-110 transition-transform">
                                                 <span className="material-symbols-outlined text-sm">edit</span>
                                             </button>
@@ -148,22 +148,24 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                                         <span className="lowercase">{inquiry.buyerEmail}</span>
                                                     </div>
                                                 </div>
-                                                <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                                <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
                                                     {inquiry.status}
                                                 </div>
                                             </div>
                                             <p className="text-sm text-slate-600 dark:text-slate-400 font-medium italic mb-4">"{inquiry.message}"</p>
                                             <div className="flex items-center gap-3 border-t border-slate-200 dark:border-slate-800 pt-4">
-                                                <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Interested in:</div>
+                                                <div className="text-xs uppercase font-black tracking-widest text-slate-400">Interested in:</div>
                                                 <div className="text-xs font-bold text-stitch-primary">{inquiry.property?.title}</div>
                                             </div>
                                         </div>
-                                        <div className="flex md:flex-col gap-2 justify-center">
-                                            <a href={`tel:${inquiry.buyerPhone}`} className="bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl transition-all">
-                                                <span className="material-symbols-outlined text-xl">call</span>
+                                        <div className="grid grid-cols-2 gap-3 w-full md:w-auto md:flex md:flex-col md:justify-center mt-2 md:mt-0">
+                                            <a href={`tel:${inquiry.buyerPhone}`} className="bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                                                <span className="material-symbols-outlined text-xl md:text-xl">call</span>
+                                                <span className="md:hidden font-bold">Call</span>
                                             </a>
-                                            <a href={`mailto:${inquiry.buyerEmail}`} className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl transition-all">
-                                                <span className="material-symbols-outlined text-xl">mail</span>
+                                            <a href={`mailto:${inquiry.buyerEmail}`} className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                                                <span className="material-symbols-outlined text-xl md:text-xl">mail</span>
+                                                <span className="md:hidden font-bold">Mail</span>
                                             </a>
                                         </div>
                                     </div>
@@ -184,18 +186,18 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                                         <span>Rs. {inquiry.property?.price || 'N/A'}</span>
                                                     </div>
                                                 </div>
-                                                <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                                <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
                                                     Sent
                                                 </div>
                                             </div>
                                             <p className="text-sm text-slate-600 dark:text-slate-400 font-medium italic mb-4">You messaged: "{inquiry.message}"</p>
                                             <div className="flex items-center gap-3 border-t border-slate-200 dark:border-slate-800 pt-4">
-                                                <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Date sent:</div>
+                                                <div className="text-xs uppercase font-black tracking-widest text-slate-400">Date sent:</div>
                                                 <div className="text-xs font-bold text-slate-600 dark:text-slate-400">{new Date(inquiry.createdAt).toLocaleDateString()}</div>
                                             </div>
                                         </div>
-                                        <div className="flex md:flex-col gap-2 justify-center">
-                                            <button className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all">View Property</button>
+                                        <div className="w-full md:w-auto flex md:flex-col gap-2 justify-center mt-2 md:mt-0">
+                                            <button className="w-full bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-3 md:py-2 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all">View Property</button>
                                         </div>
                                     </div>
                                 ))
