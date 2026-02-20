@@ -139,6 +139,13 @@ const Navbar: React.FC = () => {
                 <span className="font-manrope text-sm text-[#374151]">
                   Signed in as <span className="font-semibold">{user.name}</span>
                 </span>
+                <Link
+                  to="/profile"
+                  className="bg-white text-[#D4755B] font-manrope font-bold px-6 py-3 rounded-lg border border-[#D4755B] hover:bg-[#D4755B]/5 transition-all text-center"
+                  onClick={closeMobileMenu}
+                >
+                  My Profile
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-[#D4755B] text-white font-manrope font-bold px-6 py-3 rounded-lg hover:bg-[#B86851] transition-all hover:shadow-lg text-center"

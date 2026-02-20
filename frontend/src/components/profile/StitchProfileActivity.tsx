@@ -134,9 +134,9 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                 ))
                             ) : activeTab === 'leads' && receivedInquiries.length > 0 ? (
                                 receivedInquiries.map((inquiry) => (
-                                    <div key={inquiry._id} className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-all group">
-                                        <div className="size-16 rounded-xl bg-stitch-primary/10 flex items-center justify-center text-stitch-primary shrink-0">
-                                            <span className="material-symbols-outlined text-3xl">person</span>
+                                    <div key={inquiry._id} className="p-4 md:p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 md:gap-6 hover:shadow-lg transition-all group">
+                                        <div className="size-12 md:size-16 rounded-xl bg-stitch-primary/10 flex items-center justify-center text-stitch-primary shrink-0">
+                                            <span className="material-symbols-outlined text-2xl md:text-3xl">person</span>
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex flex-wrap justify-between items-start gap-4 mb-2">
@@ -170,9 +170,9 @@ const StitchProfileActivity: React.FC<StitchProfileActivityProps> = ({ myListing
                                 ))
                             ) : activeTab === 'contacted' && sentInquiries.length > 0 ? (
                                 sentInquiries.map((inquiry) => (
-                                    <div key={inquiry._id} className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-all group">
-                                        <div className="size-16 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0">
-                                            <span className="material-symbols-outlined text-3xl">home</span>
+                                    <div key={inquiry._id} className="p-4 md:p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 md:gap-6 hover:shadow-lg transition-all group">
+                                        <div className="size-12 md:size-16 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0">
+                                            <span className="material-symbols-outlined text-2xl md:text-3xl">home</span>
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex flex-wrap justify-between items-start gap-4 mb-2">

@@ -17,7 +17,7 @@ const StitchProfileSidebar: React.FC<StitchProfileSidebarProps> = ({ onLogout, o
     ];
 
     return (
-        <aside className="lg:col-span-1 font-stitch-display">
+        <aside className="hidden lg:block lg:col-span-1 font-stitch-display">
             <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden sticky top-24">
                 <nav className="flex flex-col text-left">
                     {links.map((link) => (
