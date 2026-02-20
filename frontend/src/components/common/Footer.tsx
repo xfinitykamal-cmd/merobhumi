@@ -31,6 +31,7 @@ const Footer: React.FC = () => {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit our Facebook page"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Facebook className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
@@ -39,6 +40,7 @@ const Footer: React.FC = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit our Twitter page"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Twitter className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
@@ -47,6 +49,7 @@ const Footer: React.FC = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit our Instagram page"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Instagram className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
@@ -55,6 +58,7 @@ const Footer: React.FC = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit our LinkedIn page"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Linkedin className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
@@ -63,6 +67,7 @@ const Footer: React.FC = () => {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit our YouTube channel"
                 className="w-10 h-10 bg-[rgba(255,255,255,0.05)] hover:bg-[#D4755B] border border-[rgba(255,255,255,0.1)] rounded-lg flex items-center justify-center transition-all group"
               >
                 <Youtube className="w-5 h-5 text-[#9ca3af] group-hover:text-white transition-colors" />
@@ -142,8 +147,12 @@ const Footer: React.FC = () => {
               Subscribe to our newsletter for the latest listings, market insights, and exclusive offers.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+              <label htmlFor="newsletter-email" className="sr-only">
+                Email address for newsletter
+              </label>
               <input
                 type="email"
+                id="newsletter-email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email address"
@@ -152,7 +161,7 @@ const Footer: React.FC = () => {
               />
               <button
                 type="submit"
-                className="w-full bg-[#D4755B] hover:bg-[#C05621] text-white font-manrope font-bold text-sm px-4 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl"
+                className="w-full bg-[#D4755B] hover:bg-[#C05621] text-white font-manrope font-bold text-sm px-4 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4755B]"
               >
                 Subscribe
               </button>

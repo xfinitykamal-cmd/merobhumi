@@ -108,10 +108,13 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-[#374151] hover:text-[#D4755B] transition-colors"
+          className="md:hidden p-2 text-[#374151] hover:text-[#D4755B] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4755B] rounded-lg"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
         >
-          <span className="material-icons text-2xl">
+          <span className="material-icons text-2xl" aria-hidden="true">
             {isMobileMenuOpen ? 'close' : 'menu'}
           </span>
         </button>
@@ -119,7 +122,10 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-[#E6D5C3] shadow-lg py-4 px-8 flex flex-col gap-4">
+        <div
+          id="mobile-menu"
+          className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-[#E6D5C3] shadow-lg py-4 px-8 flex flex-col gap-4"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.path}
