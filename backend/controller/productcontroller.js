@@ -160,8 +160,11 @@ const listproperty = async (req, res) => {
         const property = await Property.find(query).sort({ createdAt: -1 });
         res.json({ property, success: true });
     } catch (error) {
-        console.log("Error listing products: ", error);
-        res.status(500).json({ message: "Server Error", success: false });
+        console.error("Error listing properties:", error);
+        res.status(500).json({
+            message: "Server Error: " + error.message,
+            success: false
+        });
     }
 };
 
