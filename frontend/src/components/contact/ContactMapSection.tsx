@@ -1,5 +1,5 @@
 import React from 'react';
-import mapLocationImage from '../../images/Map:Location.jpg';
+const mapLocationImage = "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1280&auto=format&fit=crop";
 
 const ContactMapSection: React.FC = () => {
   return (
