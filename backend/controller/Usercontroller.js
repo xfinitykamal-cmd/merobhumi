@@ -36,7 +36,7 @@ const login = async (req, res) => {
       return res.json({ message: "Invalid password", success: false });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Login Error:', error);
     res.json({ message: "Server error", success: false });
   }
 };
@@ -52,19 +52,24 @@ const register = async (req, res) => {
     await newUser.save();
     const token = createtoken(newUser._id);
 
-    // send email
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: "Welcome to Merobhumi - Your Account Has Been Created",
-      html: getWelcomeTemplate(name)
-    };
-
-    await transporter.sendMail(mailOptions);
+    // send email (non-blocking)
+    try {
+      if (transporter) {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: email,
+          subject: "Welcome to Merobhumi - Your Account Has Been Created",
+          html: getWelcomeTemplate(name)
+        };
+        await transporter.sendMail(mailOptions);
+      }
+    } catch (emailError) {
+      console.warn('⚠️ Welcome email could not be sent:', emailError.message);
+    }
 
     return res.json({ token, user: { name: newUser.name, email: newUser.email }, success: true });
   } catch (error) {
-    console.error(error);
+    console.error('Registration Error:', error);
     return res.json({ message: "Server error", success: false });
   }
 };
@@ -81,14 +86,21 @@ const forgotpassword = async (req, res) => {
     user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 1 hour
     await user.save();
     const resetUrl = `${process.env.WEBSITE_URL}/reset/${resetToken}`;
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: "Password Reset - Merobhumi Security",
-      html: getPasswordResetTemplate(resetUrl)
-    };
-
-    await transporter.sendMail(mailOptions);
+    if (transporter) {
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Password Reset - Merobhumi Security",
+        html: getPasswordResetTemplate(resetUrl)
+      };
+      await transporter.sendMail(mailOptions);
+    } else {
+      console.warn('⚠️ Password reset email could not be sent (No Transporter)');
+      return res.status(200).json({
+        message: "Password reset token generated (Note: Email service unavailable). Use this link: " + resetUrl,
+        success: true
+      });
+    }
     return res.status(200).json({ message: "Email sent", success: true });
   } catch (error) {
     console.error(error);
